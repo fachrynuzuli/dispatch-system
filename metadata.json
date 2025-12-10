@@ -1,0 +1,7 @@
+{
+  "name": "Fleet Dispatch System (FDS)",
+  "description": "An intelligent, end-to-end fleet dispatch system powered by Gemini AI for asset lifecycle, inspection analysis, and dispatch optimization.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
