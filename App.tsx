@@ -62,14 +62,14 @@ const App = () => {
   const getRecentActivities = () => [
     { 
       title: "Trip Finished: RTP0231", 
-      desc: "Delivered 140t Wood to Futong Port", 
+      desc: "Delivered 140t Wood to Alpha Port", 
       time: "10 mins ago",
       icon: CheckCircle,
       color: "text-emerald-500"
     },
     { 
       title: "Delay Alert: BDP1102", 
-      desc: "Stuck at Pelalawan access road (Traffic)", 
+      desc: "Stuck at South District access road (Traffic)", 
       time: "45 mins ago",
       icon: Clock,
       color: "text-amber-500"
@@ -121,7 +121,7 @@ const App = () => {
           </div>
           <div>
             <span className="font-bold text-lg tracking-tight block text-slate-900">Fleet Dispatch</span>
-            <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Enterprise System</span>
+            <span className="text-[10px] text-slate-500 font-medium tracking-wide leading-tight block mt-0.5 max-w-[140px]">Reimagining AI-first Fleet Dispatch System</span>
           </div>
         </div>
 
@@ -160,7 +160,10 @@ const App = () => {
         <header className={`hidden md:flex justify-between items-center px-8 py-4 sticky top-0 z-10 transition-all duration-300 ${
           scrolled ? 'bg-white/80 backdrop-blur-xl border-b border-slate-200/50 shadow-sm' : 'bg-transparent border-transparent'
         }`}>
-          <h1 className="text-2xl font-bold text-slate-900 capitalize tracking-tight">{currentView === 'map' ? 'Live Operations Map' : currentView}</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 capitalize tracking-tight">{currentView === 'map' ? 'Live Operations Map' : currentView}</h1>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">Reimagining AI-first Fleet Dispatch System</p>
+          </div>
           
           <div className="flex items-center gap-5">
             {/* Notification Bell */}

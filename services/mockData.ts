@@ -50,15 +50,15 @@ const generateTrucks = (): Truck[] => {
 
 const generateRequests = (): DispatchRequest[] => {
   const customers = [
-    { name: 'Futong Port (Wood)', loc: 'Pangkalan Kerinci' },
-    { name: 'Futong Port (CSL)', loc: 'Pelalawan' },
-    { name: 'Futong Port (Wood Chip)', loc: 'Pangkalan Kerinci' },
-    { name: 'Pelalawan Complex (Wood)', loc: 'Pelalawan' },
-    { name: 'PWH (Pulp)', loc: 'Riau Complex' },
-    { name: 'CY (Rayon Container)', loc: 'Buatan Port' },
-    { name: 'Peranap (Wood)', loc: 'Indragiri Hulu' },
-    { name: 'GEA (Peach)', loc: 'Sorek' },
-    { name: 'GER (Peach)', loc: 'Ukui' }
+    { name: 'Alpha Port (Wood)', loc: 'North District' },
+    { name: 'Alpha Port (CSL)', loc: 'South District' },
+    { name: 'Alpha Port (Wood Chip)', loc: 'North District' },
+    { name: 'Beta Complex (Wood)', loc: 'South District' },
+    { name: 'Gamma Hub (Pulp)', loc: 'Central Complex' },
+    { name: 'Delta Yard (Container)', loc: 'East Port' },
+    { name: 'Epsilon Site (Wood)', loc: 'West Valley' },
+    { name: 'Zeta Plant (Peach)', loc: 'Highlands' },
+    { name: 'Omega Facility (Peach)', loc: 'Lowlands' }
   ];
 
   const requests: DispatchRequest[] = [];
