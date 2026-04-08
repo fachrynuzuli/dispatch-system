@@ -6,6 +6,7 @@ import { Badge } from '../components/ui/Badge';
 import { SearchFilter } from '../components/ui/SearchFilter';
 import { analyzeInspection } from '../services/geminiService';
 import { AlertCircle, CheckCircle, Sparkles, Wrench, Calendar, Gauge } from 'lucide-react';
+import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 
 interface InspectionsViewProps {
   inspections: Inspection[];
@@ -94,16 +95,19 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
                 title={`Inspection Report: ${selectedInspection.id}`}
                 subtitle={selectedTruck ? `${selectedTruck.model} • ${selectedTruck.plate}` : selectedInspection.date}
                 action={
-                  <Button 
-                    variant="primary" 
-                    size="sm" 
-                    icon={<Sparkles className="w-4 h-4" />}
-                    onClick={() => handleAnalyze(selectedInspection)}
-                    isLoading={isAnalyzing}
-                    disabled={!!analysisResult}
-                  >
-                    AI Analyze
-                  </Button>
+                  <div className="relative inline-block">
+                    <Button 
+                      variant="primary" 
+                      size="sm" 
+                      icon={<Sparkles className="w-4 h-4" />}
+                      onClick={() => handleAnalyze(selectedInspection)}
+                      isLoading={isAnalyzing}
+                      disabled={!!analysisResult}
+                    >
+                      AI Analyze
+                    </Button>
+                    {isAnalyzing && <AILoadingSparkle />}
+                  </div>
                 }
               />
               <CardContent className="space-y-6">

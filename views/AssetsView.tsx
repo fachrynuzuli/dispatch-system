@@ -8,6 +8,7 @@ import { SearchFilter } from '../components/ui/SearchFilter';
 import { Truck as TruckIcon, Activity, Calendar, FileText, BarChart3, TrendingUp, AlertTriangle, Wrench } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, Tooltip, XAxis } from 'recharts';
 import { predictAssetLifespan } from '../services/geminiService';
+import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 
 interface AssetsViewProps {
   trucks: Truck[];
@@ -188,20 +189,21 @@ export const AssetsView: React.FC<AssetsViewProps> = ({ trucks, onUpdateTruck })
             {/* AI Prediction Section */}
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-900 to-violet-900 text-white p-6 shadow-soft-xl">
                <div className="absolute top-0 right-0 p-24 bg-brand-500 rounded-full blur-[80px] opacity-20 -mr-10 -mt-10 pointer-events-none"></div>
+               {loadingPrediction && <AILoadingSparkle />}
                
-               <div className="flex items-center gap-2 mb-4">
+               <div className="flex items-center gap-2 mb-4 relative z-20">
                  <TrendingUp className="w-5 h-5 text-indigo-300" />
                  <h3 className="font-semibold text-lg text-white">AI Lifecycle Prediction</h3>
                </div>
 
                {loadingPrediction ? (
-                 <div className="space-y-3 animate-pulse">
+                 <div className="space-y-3 animate-pulse relative z-20">
                    <div className="h-4 bg-white/10 rounded w-3/4"></div>
                    <div className="h-4 bg-white/10 rounded w-1/2"></div>
                    <div className="h-4 bg-white/10 rounded w-5/6"></div>
                  </div>
                ) : (
-                 <div className="prose prose-invert prose-sm">
+                 <div className="prose prose-invert prose-sm relative z-20">
                    <p className="whitespace-pre-line text-indigo-50 leading-relaxed">
                      {prediction}
                    </p>

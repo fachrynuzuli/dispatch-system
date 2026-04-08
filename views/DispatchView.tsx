@@ -6,6 +6,7 @@ import { Badge } from '../components/ui/Badge';
 import { SearchFilter } from '../components/ui/SearchFilter';
 import { optimizeDispatch } from '../services/geminiService';
 import { MapPin, Package, BrainCircuit, ArrowRight, Check, X, Truck as TruckIcon, User, ShieldCheck } from 'lucide-react';
+import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 
 interface DispatchViewProps {
   requests: DispatchRequest[];
@@ -62,14 +63,17 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
                 onSearchChange={setSearchTerm}
                 placeholder="Search Pending Requests..."
             />
-            <Button 
-            onClick={handleOptimize} 
-            isLoading={loading}
-            icon={<BrainCircuit className="w-5 h-5" />}
-            className="bg-gradient-to-r from-brand-600 to-indigo-600 border-none shadow-lg shadow-brand-500/20 whitespace-nowrap"
-            >
-            {loading ? 'Optimizing...' : 'Auto-Assign Fleet'}
-            </Button>
+            <div className="relative inline-block">
+              <Button 
+              onClick={handleOptimize} 
+              isLoading={loading}
+              icon={<BrainCircuit className="w-5 h-5" />}
+              className="bg-gradient-to-r from-brand-600 to-indigo-600 border-none shadow-lg shadow-brand-500/20 whitespace-nowrap w-full"
+              >
+              {loading ? 'Optimizing...' : 'Auto-Assign Fleet'}
+              </Button>
+              {loading && <AILoadingSparkle />}
+            </div>
         </div>
       </div>
 
