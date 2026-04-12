@@ -24,11 +24,11 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
   return (
     <div className={`flex flex-col sm:flex-row gap-3 ${className}`}>
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input 
           type="text" 
           placeholder={placeholder}
-          className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all shadow-sm"
+          className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all shadow-soft-sm"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
         />
@@ -36,9 +36,9 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
       
       {filterOptions.length > 0 && onFilterChange && (
         <div className="relative min-w-[160px]">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <select 
-            className="w-full pl-10 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 appearance-none shadow-sm cursor-pointer text-slate-700"
+            className="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 appearance-none shadow-soft-sm cursor-pointer"
             value={activeFilter}
             onChange={(e) => onFilterChange(e.target.value)}
           >

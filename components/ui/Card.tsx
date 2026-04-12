@@ -9,16 +9,15 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ children, className = '', onClick, glass = false, interactive = false }) => {
-  const baseClasses = `rounded-2xl border transition-all duration-300 overflow-hidden`;
+  const baseClasses = `rounded-2xl border border-slate-200 transition-all duration-300 overflow-hidden`;
   
   const styleClasses = glass 
-    ? `glass-panel border-white/40 shadow-soft-md` 
-    : `bg-white border-slate-100 shadow-soft-sm`;
+    ? `bg-white/80 backdrop-blur-xl` 
+    : `bg-white`;
 
-  // Bento-style interaction: lift up and deepen shadow
   const interactionClasses = (onClick || interactive)
-    ? `hover:-translate-y-1 hover:shadow-soft-xl cursor-pointer active:scale-[0.98] active:shadow-soft-sm`
-    : `hover:shadow-soft-md`;
+    ? `hover:-translate-y-1 hover:shadow-soft-xl cursor-pointer active:translate-y-0 active:shadow-soft-sm shadow-soft-md`
+    : `shadow-soft-sm`;
   
   return (
     <div 
@@ -31,9 +30,9 @@ export const Card: React.FC<CardProps> = ({ children, className = '', onClick, g
 };
 
 export const CardHeader: React.FC<{ title: string; subtitle?: string; action?: React.ReactNode }> = ({ title, subtitle, action }) => (
-  <div className="px-6 py-4 flex justify-between items-start border-b border-slate-50/50">
+  <div className="px-6 py-5 flex justify-between items-start border-b border-slate-200 bg-white">
     <div>
-      <h3 className="text-lg font-semibold text-slate-900 tracking-tight">{title}</h3>
+      <h3 className="text-lg font-display font-semibold text-slate-900 tracking-tight">{title}</h3>
       {subtitle && <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>}
     </div>
     {action && <div>{action}</div>}

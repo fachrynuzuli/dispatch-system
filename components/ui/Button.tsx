@@ -16,14 +16,14 @@ export const Button: React.FC<ButtonProps> = ({
   isLoading,
   ...props 
 }) => {
-  const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
+  const baseStyles = "inline-flex items-center justify-center font-semibold transition-all duration-300 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
   
   const variants = {
-    primary: "bg-brand-600 hover:bg-brand-500 text-white shadow-soft-sm hover:shadow-soft-md rounded-xl",
-    secondary: "bg-brand-50 hover:bg-brand-100 text-brand-900 rounded-xl",
-    outline: "bg-transparent border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl",
-    ghost: "bg-transparent hover:bg-slate-100 text-slate-600 rounded-lg",
-    danger: "bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100 rounded-xl"
+    primary: "bg-brand-500 hover:bg-brand-600 text-white shadow-soft-sm hover:shadow-soft-md rounded-lg",
+    secondary: "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-soft-sm hover:shadow-soft-md rounded-lg",
+    outline: "bg-transparent border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg",
+    ghost: "bg-transparent hover:bg-slate-100 text-slate-700 rounded-lg",
+    danger: "bg-rose-600 hover:bg-rose-700 text-white shadow-soft-sm hover:shadow-soft-md rounded-lg"
   };
 
   const sizes = {

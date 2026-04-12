@@ -20,10 +20,10 @@ export const AILoadingSparkle = () => {
         <rect 
           x="2" y="2" 
           width="calc(100% - 4px)" height="calc(100% - 4px)" 
-          rx="8" ry="8"
+          rx="12" ry="12"
           fill="none" 
           stroke="url(#ai-gradient)" 
-          strokeWidth="2"
+          strokeWidth="4"
           pathLength="100"
           strokeDasharray="20 80"
           strokeDashoffset="0"

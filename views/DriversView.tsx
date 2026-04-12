@@ -126,7 +126,7 @@ export const DriversView: React.FC<DriversViewProps> = ({ drivers }) => {
 
                 <div className="flex flex-wrap gap-1 mt-2">
                     {driver.certifications.map(cert => (
-                        <span key={cert} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                        <span key={cert} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-brand-50 text-brand-700 border border-brand-100">
                             {cert}
                         </span>
                     ))}

@@ -9,12 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "recharts": "^3.5.1",
-    "react": "^19.2.1",
-    "lucide-react": "^0.559.0",
     "@google/genai": "^1.32.0",
+    "lucide-react": "^0.559.0",
+    "pigeon-maps": "0.21.3",
+    "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "pigeon-maps": "0.21.3"
+    "react-markdown": "^10.1.0",
+    "recharts": "^3.5.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

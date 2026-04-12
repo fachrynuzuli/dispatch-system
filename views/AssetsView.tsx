@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Markdown from 'react-markdown';
 import { Truck, TruckStatus } from '../types';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -9,6 +10,7 @@ import { Truck as TruckIcon, Activity, Calendar, FileText, BarChart3, TrendingUp
 import { ResponsiveContainer, BarChart, Bar, Tooltip, XAxis } from 'recharts';
 import { predictAssetLifespan } from '../services/geminiService';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
+import { MaintenanceCalendar } from '../components/ui/MaintenanceCalendar';
 
 interface AssetsViewProps {
   trucks: Truck[];
@@ -87,8 +89,8 @@ export const AssetsView: React.FC<AssetsViewProps> = ({ trucks, onUpdateTruck })
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card glass className="md:col-span-2">
-          <CardContent className="flex items-center justify-between">
+        <Card className="md:col-span-2 bg-white border border-slate-200 shadow-soft-sm rounded-2xl">
+          <CardContent className="flex items-center justify-between p-6">
             <div>
               <h3 className="text-lg font-semibold text-slate-900 tracking-tight">Health Overview</h3>
               <p className="text-slate-500 text-sm">Real-time health score distribution</p>
@@ -96,8 +98,8 @@ export const AssetsView: React.FC<AssetsViewProps> = ({ trucks, onUpdateTruck })
             <div className="h-24 w-64 hidden sm:block">
                <ResponsiveContainer width="100%" height="100%">
                  <BarChart data={chartData}>
-                   <Bar dataKey="health" fill="#0ea5e9" radius={[4,4,0,0]} />
-                   <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}/>
+                   <Bar dataKey="health" fill="#D97757" radius={[4,4,0,0]} />
+                   <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '8px', border: '1px solid #e8e5e1', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.04)' }}/>
                  </BarChart>
                </ResponsiveContainer>
             </div>
@@ -187,54 +189,70 @@ export const AssetsView: React.FC<AssetsViewProps> = ({ trucks, onUpdateTruck })
             </div>
 
             {/* AI Prediction Section */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-900 to-violet-900 text-white p-6 shadow-soft-xl">
-               <div className="absolute top-0 right-0 p-24 bg-brand-500 rounded-full blur-[80px] opacity-20 -mr-10 -mt-10 pointer-events-none"></div>
+            <div className="relative overflow-hidden rounded-2xl bg-brand-50 border border-brand-200 text-slate-900 p-6 shadow-soft-sm">
                {loadingPrediction && <AILoadingSparkle />}
                
                <div className="flex items-center gap-2 mb-4 relative z-20">
-                 <TrendingUp className="w-5 h-5 text-indigo-300" />
-                 <h3 className="font-semibold text-lg text-white">AI Lifecycle Prediction</h3>
+                 <div className="relative">
+                   <TrendingUp className="w-5 h-5 text-brand-600" />
+                   {!loadingPrediction && prediction && (
+                     <svg className="absolute -top-1 -right-1 w-3 h-3 text-emerald-500 animate-ping" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                     </svg>
+                   )}
+                 </div>
+                 <h3 className="font-semibold text-lg text-slate-900">AI Lifecycle Prediction</h3>
                </div>
 
                {loadingPrediction ? (
                  <div className="space-y-3 animate-pulse relative z-20">
-                   <div className="h-4 bg-white/10 rounded w-3/4"></div>
-                   <div className="h-4 bg-white/10 rounded w-1/2"></div>
-                   <div className="h-4 bg-white/10 rounded w-5/6"></div>
+                   <div className="h-4 bg-brand-200/50 rounded w-3/4"></div>
+                   <div className="h-4 bg-brand-200/50 rounded w-1/2"></div>
+                   <div className="h-4 bg-brand-200/50 rounded w-5/6"></div>
                  </div>
                ) : (
-                 <div className="prose prose-invert prose-sm relative z-20">
-                   <p className="whitespace-pre-line text-indigo-50 leading-relaxed">
-                     {prediction}
-                   </p>
+                 <div className="prose prose-sm relative z-20 markdown-body max-w-none text-slate-700">
+                   <Markdown>{prediction}</Markdown>
                  </div>
                )}
             </div>
 
-             {/* Maintenance History Stub */}
-             <div>
-                <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-slate-400" />
-                    Recent Issues
-                </h4>
-                <div className="space-y-3">
-                    <div className="flex gap-4 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                        <div className="text-slate-400 text-sm w-24">Dec 2025</div>
-                        <div>
-                            <p className="text-sm font-medium text-slate-900">Routine Inspection</p>
-                            <p className="text-xs text-slate-500">Passed with minor warnings on tire pressure.</p>
-                        </div>
-                    </div>
-                    {selectedTruck.healthScore < 80 && (
-                        <div className="flex gap-4 p-3 rounded-xl border border-rose-100 bg-rose-50/30">
-                            <div className="text-rose-400 text-sm w-24">Nov 2025</div>
+             {/* Bottom Grid: Maintenance History & Calendar */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 {/* Maintenance History Stub */}
+                 <div>
+                    <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-slate-400" />
+                        Recent Issues
+                    </h4>
+                    <div className="space-y-3">
+                        <div className="flex gap-4 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                            <div className="text-slate-400 text-sm w-24">Dec 2025</div>
                             <div>
-                                <p className="text-sm font-medium text-rose-900">Brake System Alert</p>
-                                <p className="text-xs text-rose-600">Sensor reported irregular pressure.</p>
+                                <p className="text-sm font-medium text-slate-900">Routine Inspection</p>
+                                <p className="text-xs text-slate-500">Passed with minor warnings on tire pressure.</p>
                             </div>
                         </div>
-                    )}
-                </div>
+                        {selectedTruck.healthScore < 80 && (
+                            <div className="flex gap-4 p-3 rounded-xl border border-rose-100 bg-rose-50/30">
+                                <div className="text-rose-400 text-sm w-24">Nov 2025</div>
+                                <div>
+                                    <p className="text-sm font-medium text-rose-900">Brake System Alert</p>
+                                    <p className="text-xs text-rose-600">Sensor reported irregular pressure.</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                 </div>
+
+                 {/* Maintenance Calendar */}
+                 <div>
+                    <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-slate-400" />
+                        Schedule
+                    </h4>
+                    <MaintenanceCalendar />
+                 </div>
              </div>
 
              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

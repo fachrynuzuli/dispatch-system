@@ -5,10 +5,10 @@ import { Truck, TruckStatus, Inspection, InspectionDecision, DispatchRequest, Dr
 const generateTrucks = (): Truck[] => {
   const trucks: Truck[] = [];
   const configs = [
-    { prefix: 'RMP', model: 'Mercedes Axor', weightClass: '40t', count: 15, brands: ['Mercedes-Benz'] },
-    { prefix: 'BDP', model: 'Volvo FMX 500', weightClass: '55t', count: 20, brands: ['Volvo'] },
-    { prefix: 'RTP', model: 'Volvo FH-16', weightClass: '150t', count: 10, brands: ['Volvo'] },
-    { prefix: 'RTP', model: 'Scania R620', weightClass: '130t', count: 10, brands: ['Scania'] },
+    { prefix: 'TRK-A-', model: 'Mercedes Axor', weightClass: '40t', count: 15, brands: ['Mercedes-Benz'] },
+    { prefix: 'TRK-B-', model: 'Volvo FMX 500', weightClass: '55t', count: 20, brands: ['Volvo'] },
+    { prefix: 'TRK-C-', model: 'Volvo FH-16', weightClass: '150t', count: 10, brands: ['Volvo'] },
+    { prefix: 'TRK-D-', model: 'Scania R620', weightClass: '130t', count: 10, brands: ['Scania'] },
   ];
 
   // Base coordinates for Riau/Pekanbaru area
@@ -50,15 +50,15 @@ const generateTrucks = (): Truck[] => {
 
 const generateRequests = (): DispatchRequest[] => {
   const customers = [
-    { name: 'Alpha Port (Wood)', loc: 'North District' },
-    { name: 'Alpha Port (CSL)', loc: 'South District' },
-    { name: 'Alpha Port (Wood Chip)', loc: 'North District' },
-    { name: 'Beta Complex (Wood)', loc: 'South District' },
-    { name: 'Gamma Hub (Pulp)', loc: 'Central Complex' },
-    { name: 'Delta Yard (Container)', loc: 'East Port' },
-    { name: 'Epsilon Site (Wood)', loc: 'West Valley' },
-    { name: 'Zeta Plant (Peach)', loc: 'Highlands' },
-    { name: 'Omega Facility (Peach)', loc: 'Lowlands' }
+    { name: 'Port Facility Alpha', loc: 'North District' },
+    { name: 'Logistics Hub Beta', loc: 'South District' },
+    { name: 'Industrial Park Gamma', loc: 'North District' },
+    { name: 'Distribution Center Delta', loc: 'South District' },
+    { name: 'Warehouse Complex Epsilon', loc: 'Central Complex' },
+    { name: 'Manufacturing Site Zeta', loc: 'East Port' },
+    { name: 'Storage Yard Eta', loc: 'West Valley' },
+    { name: 'Processing Plant Theta', loc: 'Highlands' },
+    { name: 'Assembly Line Iota', loc: 'Lowlands' }
   ];
 
   const requests: DispatchRequest[] = [];

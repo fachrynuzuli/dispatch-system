@@ -1,7 +1,7 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { Inspection, Truck, DispatchRequest, DispatchAssignment, Driver } from "../types";
 
-const apiKey = process.env.API_KEY || ''; 
+const apiKey = process.env.GEMINI_API_KEY || ''; 
 const ai = new GoogleGenAI({ apiKey });
 
 /**
@@ -29,16 +29,17 @@ export const analyzeInspection = async (inspection: Inspection, truck: Truck): P
     Inspector Notes: "${inspection.overallNotes}"
     
     Task:
-    1. Summarize the critical issues concisely.
-    2. Recommend a decision: "Dispatch Ready" OR "Workshop Required".
-    3. Explain your reasoning in 1 sentence.
+    Provide a compact, point-by-point reasoning using Markdown bullet points.
+    - Summarize critical issues.
+    - Recommend a decision ("Dispatch Ready" OR "Workshop Required").
+    - Briefly explain the reasoning.
     
     Keep the tone professional and safety-first.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
     });
     return getText(response);
@@ -97,16 +98,15 @@ export const optimizeDispatch = async (requests: DispatchRequest[], trucks: Truc
     Output a JSON array of assignments.
     
     CRITICAL INSTRUCTION FOR "reasoning" FIELD:
+    Provide a compact, point-by-point reasoning using Markdown bullet points.
     - Explain the specific "Why" for BOTH the truck and the driver.
     - Explicitly mention the load capacity vs weight match.
-    - Mention historical performance or experience (e.g., "Assigned Budi due to 10yr safety record").
-    - VARY THE PHRASING. Do not start every sentence with "Assigned...". Use "Chosen for...", "Ideally suited because...", "Matches requirements due to..."
-    - Compare against others briefly if relevant (e.g. "Preferred over Truck X due to higher health score").
+    - Mention historical performance or experience.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -148,17 +148,15 @@ export const predictAssetLifespan = async (truck: Truck): Promise<string> => {
     Purchase Date: ${truck.purchaseDate}
     Current Health Score: ${truck.healthScore}/100
     
-    Provide a strategic assessment:
-    1. Estimated Remaining Useful Life (in years/km).
-    2. Key maintenance risks for this specific model at this mileage.
-    3. Replacement recommendation (Keep, Refurbish, or Plan Disposal).
-    
-    Format as HTML-safe plain text with bullet points.
+    Provide a strategic assessment using compact, point-by-point Markdown bullet points:
+    - Estimated Remaining Useful Life (in years/km).
+    - Key maintenance risks for this specific model at this mileage.
+    - Replacement recommendation (Keep, Refurbish, or Plan Disposal).
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
     });
     return getText(response);
@@ -175,8 +173,8 @@ export const askFleetAssistant = async (question: string, contextData: string): 
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Context: ${contextData}\n\nUser Question: ${question}\n\nAnswer as a helpful fleet assistant.`,
+      model: 'gemini-3-flash-preview',
+      contents: `Context: ${contextData}\n\nUser Question: ${question}\n\nAnswer as a helpful fleet assistant. Use compact, point-by-point Markdown formatting for your reasoning and explanations.`,
     });
     return getText(response);
   } catch (error) {

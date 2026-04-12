@@ -7,31 +7,50 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'sans-serif'],
+              sans: ['Albert Sans', 'sans-serif'],
+              display: ['Spectral', 'serif'],
+              mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
               brand: {
-                50: '#f0f9ff',
-                100: '#e0f2fe',
-                500: '#0ea5e9', // Sky 500
-                600: '#0284c7',
-                900: '#0c4a6e',
+                50: '#fdf8f6',
+                100: '#f2e8e5',
+                200: '#eaddd7',
+                300: '#e0cec7',
+                400: '#d2bab0',
+                500: '#D97757', // Claude-like rust/amber
+                600: '#c25e3e',
+                700: '#a34729',
+                800: '#85351c',
+                900: '#6b2a17',
               },
-              neutral: {
-                850: '#1f2937',
+              slate: {
+                50: '#faf9f8',
+                100: '#f4f2f0',
+                200: '#e8e5e1',
+                300: '#d6d2cd',
+                400: '#b5b0a8',
+                500: '#948f87',
+                600: '#736e66',
+                700: '#5c5852',
+                800: '#4a4642',
+                900: '#3d3a36',
+                950: '#292724',
               }
             },
             boxShadow: {
-              'soft-sm': '0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03)',
-              'soft-md': '0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-              'soft-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
-              'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+              'soft-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+              'soft-md': '0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
+              'soft-xl': '0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02)',
+              'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.04)',
+              'hard': 'none',
+              'hard-lg': 'none',
             },
             animation: {
               'bell-shake': 'bell-shake 0.5s ease-in-out both',
@@ -51,8 +70,10 @@
     </script>
     <style>
       body {
-        background-color: #f8fafc;
+        background-color: #FAF9F6;
+        color: #292724;
         -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       /* Custom Scrollbar */
       ::-webkit-scrollbar {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Markdown from 'react-markdown';
 import { Inspection, Truck, InspectionDecision } from '../types';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -56,7 +57,7 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
           {filteredInspections.map(ins => (
             <Card 
               key={ins.id} 
-              className={`cursor-pointer transition-all ${selectedInspection?.id === ins.id ? 'ring-2 ring-brand-500 border-transparent shadow-soft-md scale-[1.02]' : 'hover:border-brand-200'}`}
+              className={`cursor-pointer transition-all ${selectedInspection?.id === ins.id ? 'ring-2 ring-brand-500 border-transparent shadow-soft-sm scale-[1.02]' : 'hover:border-brand-200'}`}
               onClick={() => { setSelectedInspection(ins); setAnalysisResult(null); }}
             >
               <CardContent className="p-4">
@@ -144,14 +145,19 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
 
                 {/* AI Result Section */}
                 {analysisResult && (
-                  <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-4 animate-in slide-in-from-top-2">
-                    <div className="flex items-center gap-2 mb-2 text-indigo-700 font-medium">
-                      <Sparkles className="w-4 h-4" />
+                  <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 animate-in slide-in-from-top-2">
+                    <div className="flex items-center gap-2 mb-2 text-brand-700 font-medium">
+                      <div className="relative">
+                        <Sparkles className="w-4 h-4" />
+                        <svg className="absolute -top-1 -right-1 w-2.5 h-2.5 text-emerald-500 animate-ping" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
                       Gemini Recommendation
                     </div>
-                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
-                      {analysisResult}
-                    </p>
+                    <div className="text-sm text-slate-700 markdown-body prose prose-sm max-w-none">
+                      <Markdown>{analysisResult}</Markdown>
+                    </div>
                     <div className="mt-4 flex gap-3">
                       <Button size="sm" variant="secondary" className="bg-white" icon={<CheckCircle className="w-4 h-4" />}>Approve for Dispatch</Button>
                       <Button size="sm" variant="danger" className="bg-white" icon={<Wrench className="w-4 h-4" />}>Send to Workshop</Button>

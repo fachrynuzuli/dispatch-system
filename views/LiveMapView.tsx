@@ -14,9 +14,9 @@ export const LiveMapView: React.FC<LiveMapViewProps> = ({ trucks }) => {
 
   const getStatusColor = (status: TruckStatus) => {
     switch (status) {
-      case TruckStatus.ON_TRIP: return '#0ea5e9'; // brand-500
+      case TruckStatus.ON_TRIP: return '#D97757'; // brand-500
       case TruckStatus.AVAILABLE: return '#10b981'; // emerald-500
-      case TruckStatus.MAINTENANCE: return '#f43f5e'; // rose-500
+      case TruckStatus.MAINTENANCE: return '#e11d48'; // rose-600
       default: return '#94a3b8'; // slate-400
     }
   };
@@ -32,7 +32,7 @@ export const LiveMapView: React.FC<LiveMapViewProps> = ({ trucks }) => {
         </div>
       </div>
 
-      <div className="flex-1 rounded-2xl overflow-hidden shadow-soft-xl border border-slate-100 bg-slate-50 relative min-h-[500px]">
+      <div className="flex-1 rounded-2xl overflow-hidden shadow-soft-sm border border-slate-200 bg-slate-50 relative min-h-[500px]">
         <Map 
           defaultCenter={defaultCenter} 
           defaultZoom={9}
@@ -62,11 +62,11 @@ export const LiveMapView: React.FC<LiveMapViewProps> = ({ trucks }) => {
         </Map>
 
         {/* Legend */}
-        <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-slate-100">
+        <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-soft-sm border border-slate-200">
           <h4 className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-3">Status Legend</h4>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-sky-500"></span>
+              <span className="w-3 h-3 rounded-full bg-brand-500"></span>
               <span className="text-sm text-slate-700">On Trip</span>
             </div>
             <div className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export const LiveMapView: React.FC<LiveMapViewProps> = ({ trucks }) => {
               <span className="text-sm text-slate-700">Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span className="w-3 h-3 rounded-full bg-rose-600"></span>
               <span className="text-sm text-slate-700">Maintenance</span>
             </div>
           </div>

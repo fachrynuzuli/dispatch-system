@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Markdown from 'react-markdown';
 import { DispatchRequest, Truck, DispatchAssignment, Driver } from '../types';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -68,7 +69,7 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
               onClick={handleOptimize} 
               isLoading={loading}
               icon={<BrainCircuit className="w-5 h-5" />}
-              className="bg-gradient-to-r from-brand-600 to-indigo-600 border-none shadow-lg shadow-brand-500/20 whitespace-nowrap w-full"
+              className="bg-brand-500 hover:bg-brand-600 text-white border-none shadow-soft-sm whitespace-nowrap w-full"
               >
               {loading ? 'Optimizing...' : 'Auto-Assign Fleet'}
               </Button>
@@ -85,8 +86,13 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
           {/* AI Proposals Section */}
           {proposedAssignments.length > 0 && (
             <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center gap-2 text-indigo-700 font-semibold px-1">
-                    <BrainCircuit className="w-5 h-5" />
+                <div className="flex items-center gap-2 text-brand-700 font-semibold px-1">
+                    <div className="relative">
+                      <BrainCircuit className="w-5 h-5" />
+                      <svg className="absolute -top-1 -right-1 w-3 h-3 text-emerald-500 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
                     <span>AI Proposed Matches ({proposedAssignments.length})</span>
                 </div>
                 {proposedAssignments.map((assignment, idx) => {
@@ -97,12 +103,12 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
                     if (!req || !trk || !drv) return null;
 
                     return (
-                        <div key={idx} className="bg-white rounded-2xl p-1 shadow-soft-xl border border-indigo-100 overflow-hidden relative group">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                        <div key={idx} className="bg-white rounded-2xl p-1 shadow-soft-sm border border-brand-200 overflow-hidden relative group">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-brand-500"></div>
                             <div className="p-5 flex flex-col gap-4">
                                 <div className="flex justify-between items-start">
                                      <div className="flex items-center gap-2 mb-2">
-                                        <Badge variant="info" className="bg-indigo-50 text-indigo-700 border-indigo-100">Match Confidence: {(assignment.confidenceScore * 100).toFixed(0)}%</Badge>
+                                        <Badge variant="info" className="bg-brand-50 text-brand-700 border-brand-100">Match Confidence: {(assignment.confidenceScore * 100).toFixed(0)}%</Badge>
                                     </div>
                                     <div className="flex gap-2 shrink-0">
                                         <button onClick={() => setProposedAssignments(prev => prev.filter(a => a !== assignment))} className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg transition-colors">
@@ -150,8 +156,10 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
                                 </div>
 
                                 <div className="flex gap-2 items-start">
-                                    <BrainCircuit className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
-                                    <p className="text-sm text-slate-600 italic">"{assignment.reasoning}"</p>
+                                    <BrainCircuit className="w-4 h-4 text-brand-400 mt-0.5 shrink-0" />
+                                    <div className="text-sm text-slate-600 markdown-body prose prose-sm max-w-none">
+                                        <Markdown>{assignment.reasoning}</Markdown>
+                                    </div>
                                 </div>
                             </div>
                         </div>
