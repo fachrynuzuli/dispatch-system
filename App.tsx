@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Truck, ClipboardCheck, Map as MapIcon, Menu, X, Bell, AlertTriangle, Clock, CheckCircle, ChevronDown, LogOut, Settings, Users, Globe } from 'lucide-react';
-import { ViewState, Truck as TruckType } from './types';
-import { MOCK_TRUCKS, MOCK_INSPECTIONS, MOCK_REQUESTS, MOCK_DRIVERS } from './services/mockData';
+import { LayoutDashboard, Truck, ClipboardCheck, Map as MapIcon, Menu, X, Bell, AlertTriangle, Clock, CheckCircle, ChevronDown, LogOut, Settings, Users, Globe, Package } from 'lucide-react';
+import { ViewState, Truck as TruckType, Inspection, DispatchRequest, SparePart, InventoryStatus, InspectionDecision } from './types';
+import { MOCK_TRUCKS, MOCK_INSPECTIONS, MOCK_REQUESTS, MOCK_DRIVERS, MOCK_INVENTORY } from './services/mockData';
 import { AssetsView } from './views/AssetsView';
 import { InspectionsView } from './views/InspectionsView';
 import { DispatchView } from './views/DispatchView';
 import { DriversView } from './views/DriversView';
 import { LiveMapView } from './views/LiveMapView';
+import { InventoryView } from './views/InventoryView';
 import { GeminiAssistant } from './components/GeminiAssistant';
 import { HealthDistributionChart } from './components/HealthDistributionChart';
 import { Card, CardContent } from './components/ui/Card';
@@ -16,7 +17,16 @@ const App = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTrucks, setActiveTrucks] = useState<TruckType[]>(MOCK_TRUCKS);
   const [activeDrivers, setActiveDrivers] = useState(MOCK_DRIVERS);
+  const [inspections, setInspections] = useState<Inspection[]>(MOCK_INSPECTIONS);
+  const [requests, setRequests] = useState<DispatchRequest[]>(MOCK_REQUESTS);
+  const [inventory, setInventory] = useState<SparePart[]>(MOCK_INVENTORY);
   const [scrolled, setScrolled] = useState(false);
+  const [toast, setToast] = useState<{message: string, type: 'success' | 'info' | 'error'} | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
   
   // Simulated context string for the AI Assistant based on current data
   const aiContext = `
@@ -28,8 +38,8 @@ const App = () => {
     - Maintenance: ${activeTrucks.filter(t => t.status === 'Maintenance').length}
     - Critical Heavy Haulers (130t+): ${activeTrucks.filter(t => t.model.includes('FH-16') || t.model.includes('R620')).length} units
     
-    Pending Inspections: ${MOCK_INSPECTIONS.length}
-    Pending Requests: ${MOCK_REQUESTS.filter(r => r.status === 'Pending').length}
+    Pending Inspections: ${inspections.length}
+    Pending Requests: ${requests.filter(r => r.status === 'Pending').length}
   `;
 
   const handleScroll = (e: React.UIEvent<HTMLElement>) => {
@@ -38,6 +48,27 @@ const App = () => {
 
   const handleUpdateTruck = (updatedTruck: TruckType) => {
     setActiveTrucks(prev => prev.map(t => t.id === updatedTruck.id ? updatedTruck : t));
+    showToast(`Truck ${updatedTruck.plate} updated successfully.`, 'success');
+  };
+
+  const handleUpdateInspection = (id: string, decision: InspectionDecision) => {
+    setInspections(prev => prev.map(i => i.id === id ? { ...i, decision } : i));
+    showToast(`Inspection ${id} marked as ${decision}.`, 'success');
+  };
+
+  const handleGeneratePO = () => {
+    setInventory(prev => prev.map(item => {
+      if (item.status === InventoryStatus.LOW_STOCK || item.status === InventoryStatus.OUT_OF_STOCK) {
+        return { ...item, stockLevel: item.minimumStock + 10, status: InventoryStatus.IN_STOCK };
+      }
+      return item;
+    }));
+    showToast('Purchase Orders generated and stock simulated as replenished.', 'success');
+  };
+
+  const handleManualAssign = (requestId: string, truckId: string, driverId: string) => {
+    setRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: 'Assigned', assignedTruckId: truckId, assignedDriverId: driverId } : r));
+    showToast(`Request ${requestId} assigned to Truck ${truckId}.`, 'success');
   };
 
   const NavItem = ({ view, icon: Icon, label }: { view: ViewState, icon: any, label: string }) => (
@@ -123,6 +154,7 @@ const App = () => {
           <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
           <NavItem view="map" icon={Globe} label="Live Map" />
           <NavItem view="assets" icon={Truck} label="Fleet Assets" />
+          <NavItem view="inventory" icon={Package} label="Spare Parts" />
           <NavItem view="drivers" icon={Users} label="Drivers" />
           <NavItem view="inspections" icon={ClipboardCheck} label="Inspections" />
           <NavItem view="dispatch" icon={MapIcon} label="Dispatch" />
@@ -158,13 +190,19 @@ const App = () => {
           
           <div className="flex items-center gap-6">
             {/* Notification Bell */}
-            <button className="group relative p-3 bg-white border border-slate-100 rounded-full hover:shadow-soft-md hover:-translate-y-0.5 transition-all">
+            <button 
+              onClick={() => showToast('No new notifications at this time.', 'info')}
+              className="group relative p-3 bg-white border border-slate-100 rounded-full hover:shadow-soft-md hover:-translate-y-0.5 transition-all"
+            >
               <Bell className="w-5 h-5 text-slate-600 group-hover:animate-bell-shake origin-top" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-brand-500 rounded-full group-hover:scale-110 transition-transform duration-200"></span>
             </button>
 
             {/* Profile Placeholder */}
-            <div className="group flex items-center gap-4 cursor-pointer pl-6 border-l border-slate-200">
+            <div 
+              onClick={() => showToast('Profile settings coming soon.', 'info')}
+              className="group flex items-center gap-4 cursor-pointer pl-6 border-l border-slate-200"
+            >
                <div className="text-right hidden lg:block">
                  <p className="text-sm font-semibold text-slate-900 group-hover:text-brand-600 transition-colors">Admin User</p>
                  <p className="text-xs text-slate-500">Logistics Manager</p>
@@ -208,7 +246,7 @@ const App = () => {
                     </div>
                     <h2 className="text-2xl font-display font-semibold mb-3 tracking-tight text-slate-900">Optimization Ready</h2>
                     <p className="text-slate-700 mb-8 max-w-xs leading-relaxed text-sm">
-                      {MOCK_REQUESTS.filter(r => r.status === 'Pending').length} pending dispatch requests can be optimized with available assets using Gemini AI.
+                      {requests.filter(r => r.status === 'Pending').length} pending dispatch requests can be optimized with available assets using Gemini AI.
                     </p>
                     <button 
                       onClick={() => setCurrentView('dispatch')}
@@ -234,7 +272,7 @@ const App = () => {
                         </span>
                         Live Feed
                       </h3>
-                      <button className="text-xs font-medium text-slate-500 hover:text-brand-600 transition-colors">View All</button>
+                      <button onClick={() => showToast('Activity log expanded view coming soon.', 'info')} className="text-xs font-medium text-slate-500 hover:text-brand-600 transition-colors">View All</button>
                     </div>
                     <div className="space-y-4">
                       {getRecentActivities().map((item, i) => (
@@ -260,13 +298,30 @@ const App = () => {
 
           {currentView === 'map' && <LiveMapView trucks={activeTrucks} />}
           {currentView === 'assets' && <AssetsView trucks={activeTrucks} onUpdateTruck={handleUpdateTruck} />}
+          {currentView === 'inventory' && <InventoryView inventory={inventory} trucks={activeTrucks} onGeneratePO={handleGeneratePO} onShowToast={showToast} />}
           {currentView === 'drivers' && <DriversView drivers={activeDrivers} />}
-          {currentView === 'inspections' && <InspectionsView inspections={MOCK_INSPECTIONS} trucks={activeTrucks} />}
-          {currentView === 'dispatch' && <DispatchView requests={MOCK_REQUESTS} trucks={activeTrucks} drivers={activeDrivers} />}
+          {currentView === 'inspections' && <InspectionsView inspections={inspections} trucks={activeTrucks} onUpdateInspection={handleUpdateInspection} />}
+          {currentView === 'dispatch' && <DispatchView requests={requests} trucks={activeTrucks} drivers={activeDrivers} onManualAssign={handleManualAssign} />}
         </div>
       </main>
 
       <GeminiAssistant contextData={aiContext} />
+
+      {/* Global Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className={`px-6 py-4 rounded-xl shadow-lg border flex items-center gap-3 ${
+            toast.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
+            toast.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' :
+            'bg-brand-50 border-brand-200 text-brand-800'
+          }`}>
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-emerald-600" />}
+            {toast.type === 'error' && <AlertTriangle className="w-5 h-5 text-rose-600" />}
+            {toast.type === 'info' && <Bell className="w-5 h-5 text-brand-600" />}
+            <span className="font-medium text-sm">{toast.message}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

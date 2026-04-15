@@ -1,4 +1,4 @@
-import { Truck, TruckStatus, Inspection, InspectionDecision, DispatchRequest, Driver } from '../types';
+import { Truck, TruckStatus, Inspection, InspectionDecision, DispatchRequest, Driver, SparePart, InventoryStatus } from '../types';
 
 // --- Data Generators ---
 
@@ -141,3 +141,14 @@ export const MOCK_TRUCKS = generateTrucks();
 export const MOCK_REQUESTS = generateRequests();
 export const MOCK_DRIVERS = generateDrivers();
 export const MOCK_INSPECTIONS = generateInspections(MOCK_TRUCKS);
+
+export const MOCK_INVENTORY: SparePart[] = [
+  { id: 'PRT-001', name: 'Heavy Duty Brake Pads', category: 'Brakes', stockLevel: 12, minimumStock: 20, unitCost: 150, supplier: 'Volvo Parts Inc', status: InventoryStatus.LOW_STOCK, lastRestocked: '2025-11-15' },
+  { id: 'PRT-002', name: 'Synthetic Engine Oil (55gal)', category: 'Fluids', stockLevel: 5, minimumStock: 3, unitCost: 850, supplier: 'Lubricants Direct', status: InventoryStatus.IN_STOCK, lastRestocked: '2025-12-01' },
+  { id: 'PRT-003', name: 'Air Filter Element', category: 'Filters', stockLevel: 0, minimumStock: 15, unitCost: 45, supplier: 'AutoParts Wholesale', status: InventoryStatus.OUT_OF_STOCK, lastRestocked: '2025-10-20' },
+  { id: 'PRT-004', name: 'Alternator 24V', category: 'Electrical', stockLevel: 4, minimumStock: 2, unitCost: 320, supplier: 'ElectroTruck', status: InventoryStatus.IN_STOCK, lastRestocked: '2025-11-28' },
+  { id: 'PRT-005', name: 'Transmission Fluid (5gal)', category: 'Fluids', stockLevel: 8, minimumStock: 10, unitCost: 120, supplier: 'Lubricants Direct', status: InventoryStatus.LOW_STOCK, lastRestocked: '2025-11-10' },
+  { id: 'PRT-006', name: 'Hydraulic Hose Assembly', category: 'Hydraulics', stockLevel: 15, minimumStock: 10, unitCost: 85, supplier: 'HydraFlex', status: InventoryStatus.IN_STOCK, lastRestocked: '2025-12-05' },
+  { id: 'PRT-007', name: 'Steering Pump', category: 'Steering', stockLevel: 1, minimumStock: 3, unitCost: 450, supplier: 'AutoParts Wholesale', status: InventoryStatus.LOW_STOCK, lastRestocked: '2025-09-15' },
+  { id: 'PRT-008', name: 'LED Headlamp Bulbs', category: 'Electrical', stockLevel: 45, minimumStock: 20, unitCost: 25, supplier: 'ElectroTruck', status: InventoryStatus.IN_STOCK, lastRestocked: '2025-12-10' },
+];

@@ -12,9 +12,10 @@ import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 interface InspectionsViewProps {
   inspections: Inspection[];
   trucks: Truck[];
+  onUpdateInspection?: (id: string, decision: InspectionDecision) => void;
 }
 
-export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, trucks }) => {
+export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, trucks, onUpdateInspection }) => {
   const [selectedInspection, setSelectedInspection] = useState<Inspection | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
@@ -159,8 +160,24 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
                       <Markdown>{analysisResult}</Markdown>
                     </div>
                     <div className="mt-4 flex gap-3">
-                      <Button size="sm" variant="secondary" className="bg-white" icon={<CheckCircle className="w-4 h-4" />}>Approve for Dispatch</Button>
-                      <Button size="sm" variant="danger" className="bg-white" icon={<Wrench className="w-4 h-4" />}>Send to Workshop</Button>
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        className="bg-white" 
+                        icon={<CheckCircle className="w-4 h-4" />}
+                        onClick={() => onUpdateInspection?.(selectedInspection.id, InspectionDecision.DISPATCH_READY)}
+                      >
+                        Approve for Dispatch
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="danger" 
+                        className="bg-white" 
+                        icon={<Wrench className="w-4 h-4" />}
+                        onClick={() => onUpdateInspection?.(selectedInspection.id, InspectionDecision.WORKSHOP)}
+                      >
+                        Send to Workshop
+                      </Button>
                     </div>
                   </div>
                 )}

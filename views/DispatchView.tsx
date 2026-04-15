@@ -8,14 +8,16 @@ import { SearchFilter } from '../components/ui/SearchFilter';
 import { optimizeDispatch } from '../services/geminiService';
 import { MapPin, Package, BrainCircuit, ArrowRight, Check, X, Truck as TruckIcon, User, ShieldCheck } from 'lucide-react';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
+import { Modal } from '../components/ui/Modal';
 
 interface DispatchViewProps {
   requests: DispatchRequest[];
   trucks: Truck[];
   drivers: Driver[];
+  onManualAssign?: (requestId: string, truckId: string, driverId: string) => void;
 }
 
-export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, drivers }) => {
+export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, drivers, onManualAssign }) => {
   // Local state to manage requests so we can simulate "Assigning" them
   const [localRequests, setLocalRequests] = useState(requests);
   const [proposedAssignments, setProposedAssignments] = useState<DispatchAssignment[]>([]);
@@ -23,6 +25,11 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
   
   // Search state
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Manual Assign Modal State
+  const [manualAssignRequest, setManualAssignRequest] = useState<DispatchRequest | null>(null);
+  const [selectedTruckId, setSelectedTruckId] = useState<string>('');
+  const [selectedDriverId, setSelectedDriverId] = useState<string>('');
 
   const handleOptimize = async () => {
     setLoading(true);
@@ -41,6 +48,22 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
     ));
     // 2. Remove this assignment suggestion from the list
     setProposedAssignments(prev => prev.filter(a => a.requestId !== assignment.requestId));
+    // 3. Call global handler if provided
+    onManualAssign?.(assignment.requestId, assignment.truckId, assignment.driverId);
+  };
+
+  const handleConfirmManualAssign = () => {
+    if (manualAssignRequest && selectedTruckId && selectedDriverId) {
+      setLocalRequests(prev => prev.map(req => 
+        req.id === manualAssignRequest.id 
+          ? { ...req, status: 'Assigned', assignedTruckId: selectedTruckId, assignedDriverId: selectedDriverId } 
+          : req
+      ));
+      onManualAssign?.(manualAssignRequest.id, selectedTruckId, selectedDriverId);
+      setManualAssignRequest(null);
+      setSelectedTruckId('');
+      setSelectedDriverId('');
+    }
   };
 
   // Filter Logic
@@ -185,7 +208,7 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
                             <span className="flex items-center gap-1.5"><Package className="w-4 h-4 text-slate-400" /> {req.cargoWeight} tons</span>
                         </div>
                         </div>
-                        <Button variant="outline" size="sm">Manual Assign</Button>
+                        <Button variant="outline" size="sm" onClick={() => setManualAssignRequest(req)}>Manual Assign</Button>
                     </CardContent>
                     </Card>
                 ))}
@@ -232,6 +255,59 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
         </div>
 
       </div>
+
+      <Modal 
+        isOpen={!!manualAssignRequest} 
+        onClose={() => setManualAssignRequest(null)}
+        title="Manual Dispatch Assignment"
+      >
+        {manualAssignRequest && (
+          <div className="space-y-6">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Request Details</p>
+              <p className="font-semibold text-slate-900">{manualAssignRequest.customerName}</p>
+              <p className="text-sm text-slate-600">{manualAssignRequest.cargoWeight} tons • {manualAssignRequest.destination}</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Select Truck</label>
+                <select 
+                  className="w-full rounded-lg border-slate-200 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+                  value={selectedTruckId}
+                  onChange={(e) => setSelectedTruckId(e.target.value)}
+                >
+                  <option value="">-- Choose a Truck --</option>
+                  {trucks.filter(t => t.status === 'Available').map(t => (
+                    <option key={t.id} value={t.id}>{t.plate} ({t.model}) - Health: {t.healthScore}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Select Driver</label>
+                <select 
+                  className="w-full rounded-lg border-slate-200 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+                  value={selectedDriverId}
+                  onChange={(e) => setSelectedDriverId(e.target.value)}
+                >
+                  <option value="">-- Choose a Driver --</option>
+                  {drivers.filter(d => d.status === 'Available').map(d => (
+                    <option key={d.id} value={d.id}>{d.name} (Safety: {d.safetyScore})</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <Button variant="secondary" onClick={() => setManualAssignRequest(null)}>Cancel</Button>
+              <Button variant="primary" onClick={handleConfirmManualAssign} disabled={!selectedTruckId || !selectedDriverId}>
+                Confirm Assignment
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

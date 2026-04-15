@@ -61,6 +61,25 @@ export interface Driver {
   certifications: string[]; // e.g., 'Heavy Haul', 'Hazmat'
 }
 
+// Inventory Types
+export enum InventoryStatus {
+  IN_STOCK = 'In Stock',
+  LOW_STOCK = 'Low Stock',
+  OUT_OF_STOCK = 'Out of Stock'
+}
+
+export interface SparePart {
+  id: string;
+  name: string;
+  category: string;
+  stockLevel: number;
+  minimumStock: number;
+  unitCost: number;
+  supplier: string;
+  status: InventoryStatus;
+  lastRestocked: string;
+}
+
 // Updated types for AI Dispatch
 export interface DispatchAssignment {
   requestId: string;
@@ -70,7 +89,7 @@ export interface DispatchAssignment {
   confidenceScore: number;
 }
 
-export type ViewState = 'dashboard' | 'assets' | 'drivers' | 'inspections' | 'dispatch' | 'map';
+export type ViewState = 'dashboard' | 'assets' | 'drivers' | 'inspections' | 'dispatch' | 'map' | 'inventory';
 
 export interface FilterOption {
   label: string;

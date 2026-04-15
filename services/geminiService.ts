@@ -1,5 +1,5 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
-import { Inspection, Truck, DispatchRequest, DispatchAssignment, Driver } from "../types";
+import { Inspection, Truck, DispatchRequest, DispatchAssignment, Driver, SparePart } from "../types";
 
 const apiKey = process.env.GEMINI_API_KEY || ''; 
 const ai = new GoogleGenAI({ apiKey });
@@ -179,5 +179,49 @@ export const askFleetAssistant = async (question: string, contextData: string): 
     return getText(response);
   } catch (error) {
     return "I'm having trouble connecting to the fleet database right now.";
+  }
+};
+
+/**
+ * Predicts inventory ordering needs based on fleet health and current stock.
+ */
+export const analyzeInventoryNeeds = async (inventory: SparePart[], trucks: Truck[]): Promise<string> => {
+  if (!apiKey) return "API Key missing. Unable to perform AI analysis.";
+
+  const lowStockItems = inventory.filter(p => p.stockLevel <= p.minimumStock);
+  const poorHealthTrucks = trucks.filter(t => t.healthScore < 70);
+  const criticalHeavyHaulers = trucks.filter(t => t.model.includes('FH-16') || t.model.includes('R620'));
+  const poorHealthCriticalTrucks = criticalHeavyHaulers.filter(t => t.healthScore < 80);
+
+  const prompt = `
+    You are a Senior Fleet Maintenance & Procurement AI. Analyze the current spare parts inventory and fleet health to recommend predictive ordering.
+    
+    Current Low/Out of Stock Items:
+    ${lowStockItems.map(i => `- ${i.name} (Stock: ${i.stockLevel}, Min: ${i.minimumStock})`).join('\n')}
+    
+    Fleet Context:
+    - Total Trucks: ${trucks.length}
+    - Trucks with Poor Health (<70): ${poorHealthTrucks.length}
+    - Critical Heavy Haulers (Volvo FH-16, Scania R620): ${criticalHeavyHaulers.length} total, ${poorHealthCriticalTrucks.length} needing attention (Health < 80).
+    
+    Task:
+    Provide a compact, point-by-point reasoning using Markdown bullet points.
+    - Identify critical shortage risks based on the low stock items.
+    - Suggest specific spare parts to order based on common failure points for the fleet's most critical trucks (Volvo FH-16, Scania R620) considering their heavy workload.
+    - Correlate the predicted maintenance needs of the poor health trucks with specific inventory items (e.g., heavy duty brake pads, transmission fluids, hydraulics).
+    - Recommend predictive orders (what to order, estimated quantities, and why).
+    
+    Keep the tone professional, proactive, and focused on preventing fleet downtime.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+    });
+    return getText(response);
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return "AI Analysis failed. Please review manually.";
   }
 };
