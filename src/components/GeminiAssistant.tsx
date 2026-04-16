@@ -4,7 +4,7 @@ import { Sparkles, X, Send, Bot, ChevronUp } from 'lucide-react';
 import { Button } from './ui/Button';
 import { askFleetAssistant } from '../services/openRouterService';
 
-const ClippyIcon = ({ className }: { className?: string }) => (
+const MentorIcon = ({ className }: { className?: string }) => (
   <svg 
     viewBox="0 0 24 24" 
     fill="none" 
@@ -14,16 +14,22 @@ const ClippyIcon = ({ className }: { className?: string }) => (
     strokeLinejoin="round" 
     className={className}
   >
-    {/* Paperclip wire (vertical) */}
-    <path d="M8 7v10a4 4 0 0 0 8 0V5a6 6 0 0 0-12 0v12a8 8 0 0 0 16 0V8" />
+    {/* Hood / Crown */}
+    <path d="M4 10c0-5 3.5-7 8-7s8 2 8 7v7a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-7z" />
     
-    {/* Eyes */}
-    <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1" />
-    <circle cx="14" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1" />
+    {/* Inner Visor / Faceplate */}
+    <path d="M6 10c0-3 2.5-4 6-4s6 1 6 4v3H6v-3z" fill="currentColor" fillOpacity="0.1" />
     
-    {/* Pupils */}
-    <circle cx="10.5" cy="8" r="0.75" fill="currentColor" stroke="none" />
-    <circle cx="13.5" cy="8" r="0.75" fill="currentColor" stroke="none" />
+    {/* Digital Owl Eyes */}
+    <circle cx="9" cy="11" r="2.5" />
+    <circle cx="15" cy="11" r="2.5" />
+    
+    {/* Glowing Pupils */}
+    <circle cx="9" cy="11" r="1" fill="currentColor" stroke="none" className="animate-pulse" />
+    <circle cx="15" cy="11" r="1" fill="currentColor" stroke="none" className="animate-pulse" />
+    
+    {/* Beak / Sensor */}
+    <path d="M12 14l-1 2h2l-1-2z" fill="currentColor" stroke="none" />
   </svg>
 );
 
@@ -33,11 +39,14 @@ interface GeminiAssistantProps {
 
 export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [botName, setBotName] = useState(() => localStorage.getItem('fds_bot_name') || 'Buddy');
+  const [isEditingName, setIsEditingName] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([
-    { role: 'ai', text: 'Hi! I can help you analyze fleet performance or answer questions about specific trucks.' }
+    { role: 'ai', text: `Hi! I'm your co-pilot. I can help you analyze fleet performance or answer questions about specific trucks.` }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [wantsAttention, setWantsAttention] = useState(false);
 
   // Dragging State
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -56,6 +65,24 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
     });
     setIsInitialized(true);
   }, []);
+
+  // Persist name
+  useEffect(() => {
+    localStorage.setItem('fds_bot_name', botName);
+  }, [botName]);
+
+  // Attention Engine Loop
+  useEffect(() => {
+    if (isDragging || isOpen) return;
+    const interval = setInterval(() => {
+      // 30% chance to jump every 8 seconds
+      if (Math.random() > 0.7) {
+        setWantsAttention(true);
+        setTimeout(() => setWantsAttention(false), 1500); // Length of @keyframes buddy-jump
+      }
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [isDragging, isOpen]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     setIsDragging(true);
@@ -120,10 +147,28 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
       {isOpen && (
         <div className={`absolute bottom-24 pointer-events-auto w-[360px] h-[500px] bg-white rounded-2xl shadow-soft-xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in duration-200 ${dockSide === 'left' ? 'left-6 slide-in-from-bottom-5' : 'right-6 slide-in-from-bottom-5'}`}>
           {/* Header */}
-          <div className="p-4 bg-white border-b border-slate-200 flex justify-between items-center">
+          <div className="p-3.5 bg-white border-b border-slate-200 flex justify-between items-center group">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-brand-600" />
-              <span className="font-semibold text-slate-900">Ops Copilot</span>
+              <Bot className="w-5 h-5 text-brand-600" />
+              {isEditingName ? (
+                <input 
+                  autoFocus
+                  type="text" 
+                  value={botName}
+                  onChange={e => setBotName(e.target.value)}
+                  onBlur={() => setIsEditingName(false)}
+                  onKeyDown={e => e.key === 'Enter' && setIsEditingName(false)}
+                  className="font-semibold text-slate-900 bg-slate-100 px-2 py-0.5 rounded outline-none w-32 focus:ring-2 focus:ring-brand-500/20 text-sm"
+                />
+              ) : (
+                <span 
+                  onClick={() => setIsEditingName(true)}
+                  className="font-semibold text-slate-900 cursor-pointer hover:bg-slate-100 px-2 py-0.5 -ml-2 rounded transition-colors text-sm"
+                  title="Click to rename your buddy"
+                >
+                  {botName}
+                </span>
+              )}
             </div>
             <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600">
               <X className="w-5 h-5" />
@@ -182,9 +227,16 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
           transition: isDragging ? 'none' : 'left 0.4s cubic-bezier(0.25, 1, 0.5, 1), top 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
           touchAction: 'none'
         }}
-        className="absolute pointer-events-auto bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-all flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing shadow-lg hover:shadow-xl"
+        className={`absolute pointer-events-auto bg-slate-900 text-white rounded-full flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing hover:bg-slate-800 buddy-base ${wantsAttention ? 'buddy-jump' : ''}`}
       >
-        <ClippyIcon className="w-8 h-8 text-brand-400" />
+        <MentorIcon className="w-8 h-8 text-brand-400" />
+        
+        {/* Name tag tooltip visible on hover when closed */}
+        {!isOpen && !isDragging && (
+          <div className="absolute right-full mr-3 bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+            {botName}
+          </div>
+        )}
       </button>
     </div>
   );
