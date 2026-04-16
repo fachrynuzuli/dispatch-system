@@ -27,7 +27,7 @@ const App = () => {
   const [scrolled, setScrolled] = useState(false);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'info' | 'error'} | null>(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState('elegant');
+  const [theme, setTheme] = useState('ocean');
 
   useEffect(() => {
     document.body.className = theme === 'elegant' ? '' : `theme-${theme}`;
