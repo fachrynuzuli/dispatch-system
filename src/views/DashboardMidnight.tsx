@@ -71,7 +71,7 @@ export const DashboardMidnight: React.FC<DashboardMidnightProps> = ({
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{m.label}</span>
                 <TrendIcon className={`w-3.5 h-3.5 ${m.color}`} />
               </div>
-              <p className="text-2xl font-mono font-bold text-white tracking-tight">{m.value}</p>
+              <p className="text-2xl font-mono font-bold text-slate-200 tracking-tight">{m.value}</p>
               <p className="text-[11px] text-slate-500 mt-1 font-mono">{m.sub}</p>
             </div>
           );

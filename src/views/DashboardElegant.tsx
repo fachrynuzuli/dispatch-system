@@ -66,51 +66,57 @@ export const DashboardElegant: React.FC<DashboardElegantProps> = ({
 
       {/* Hero CTA + Health Chart + Live Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Dispatch CTA */}
-        <Card className="bg-brand-50 border border-brand-200 shadow-soft-sm overflow-hidden relative group cursor-pointer hover:-translate-y-1 transition-all duration-300" onClick={() => onNavigate('dispatch')}>
-          <CardContent className="h-full flex flex-col justify-center items-start p-8 relative z-10">
-            <div className="mb-6 p-4 bg-white rounded-2xl border border-brand-100 shadow-soft-sm group-hover:scale-110 transition-transform duration-300">
-              <Truck className="w-8 h-8 text-brand-600" />
-            </div>
-            <h2 className="text-2xl font-display font-semibold mb-3 tracking-tight text-slate-900">Optimization Ready</h2>
-            <p className="text-slate-700 mb-8 max-w-xs leading-relaxed text-sm">
-              {pendingRequests} pending dispatch requests can be optimized with available assets using AI.
-            </p>
-            <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-slate-800 transition-all active:scale-95 shadow-soft-sm flex items-center gap-2">
-              Go to Dispatch <ArrowRight className="w-4 h-4" />
-            </button>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Dispatch CTA */}
+          <Card className="bg-brand-50 border border-brand-200 shadow-soft-sm overflow-hidden relative group cursor-pointer hover:-translate-y-1 transition-all duration-300" onClick={() => onNavigate('dispatch')}>
+            <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-6">
+              <div className="flex items-center gap-5">
+                <div className="p-3 bg-white rounded-2xl border border-brand-100 shadow-soft-sm group-hover:scale-110 transition-transform duration-300 shrink-0">
+                  <Truck className="w-6 h-6 text-brand-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-display font-semibold mb-1 tracking-tight text-slate-900">Optimization Ready</h2>
+                  <p className="text-slate-700 leading-relaxed text-sm max-w-sm">
+                    {pendingRequests} pending dispatch requests can be optimized using AI.
+                  </p>
+                </div>
+              </div>
+              <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-slate-800 transition-all active:scale-95 shadow-soft-sm flex items-center gap-2 shrink-0">
+                Go to Dispatch <ArrowRight className="w-4 h-4" />
+              </button>
+            </CardContent>
+          </Card>
 
-        {/* Health Distribution */}
-        <div className="lg:col-span-1">
-          <HealthDistributionChart trucks={trucks} />
+          {/* Health Distribution */}
+          <div className="flex-1 min-h-[300px]">
+            <HealthDistributionChart trucks={trucks} />
+          </div>
         </div>
 
         {/* Live Feed */}
-        <Card className="lg:col-span-1 h-full bg-white">
-          <CardContent>
-            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+        <Card className="lg:col-span-1 bg-white flex flex-col h-full">
+          <CardContent className="flex flex-col h-full">
+            <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
               <h3 className="font-display font-semibold text-lg text-slate-900 tracking-tight flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
                 </span>
                 Live Feed
               </h3>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 flex-1 overflow-y-auto pr-1">
               {recentActivities.map((item, i) => (
-                <div key={i} className="flex gap-4 group cursor-default p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                  <div className="mt-1 p-2 bg-white rounded-xl border border-slate-100 shadow-soft-sm">
-                    <item.icon className={`w-5 h-5 ${item.color}`} />
+                <div key={i} className="flex gap-3 group cursor-default p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                  <div className="mt-0.5 p-1.5 bg-white rounded-lg border border-slate-100 shadow-sm shrink-0">
+                    <item.icon className={`w-4 h-4 ${item.color}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-start mb-0.5">
                       <p className="text-sm font-semibold text-slate-900 truncate pr-2 group-hover:text-brand-600 transition-colors">{item.title}</p>
-                      <span className="text-xs text-slate-400 whitespace-nowrap">{item.time}</span>
+                      <span className="text-[10px] text-slate-400 whitespace-nowrap">{item.time}</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-1">{item.desc}</p>
+                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}

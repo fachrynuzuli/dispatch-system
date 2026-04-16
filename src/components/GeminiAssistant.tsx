@@ -123,7 +123,7 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
           <div className="p-4 bg-white border-b border-slate-200 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-brand-600" />
-              <span className="font-semibold text-slate-900">Gemini Intelligence</span>
+              <span className="font-semibold text-slate-900">Ops Copilot</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600">
               <X className="w-5 h-5" />
@@ -146,9 +146,9 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
             {isTyping && (
               <div className="flex justify-start">
                 <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-none px-4 py-3 shadow-soft-sm flex gap-1">
-                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></span>
-                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce delay-75"></span>
-                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce delay-150"></span>
+                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-subtle-float"></span>
+                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-subtle-float delay-75"></span>
+                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-subtle-float delay-150"></span>
                 </div>
               </div>
             )}
@@ -182,7 +182,7 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
           transition: isDragging ? 'none' : 'left 0.4s cubic-bezier(0.25, 1, 0.5, 1), top 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
           touchAction: 'none'
         }}
-        className="absolute pointer-events-auto bg-slate-900 text-white rounded-full breathing-btn flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing"
+        className="absolute pointer-events-auto bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-all flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing shadow-lg hover:shadow-xl"
       >
         <ClippyIcon className="w-8 h-8 text-brand-400" />
       </button>

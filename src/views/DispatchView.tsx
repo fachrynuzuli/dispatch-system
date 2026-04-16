@@ -113,7 +113,7 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
                 <div className="flex items-center gap-2 text-brand-700 font-semibold px-1">
                     <div className="relative">
                       <BrainCircuit className="w-5 h-5" />
-                      <svg className="absolute -top-1 -right-1 w-3 h-3 text-emerald-500 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="absolute -top-1 -right-1 w-3 h-3 text-emerald-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>

@@ -7,15 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Albert Sans', 'sans-serif'],
-              display: ['Spectral', 'serif'],
-              mono: ['JetBrains Mono', 'monospace'],
+              sans: ['var(--font-sans)', 'sans-serif'],
+              display: ['var(--font-display)', 'serif'],
+              mono: ['var(--font-mono)', 'monospace'],
             },
             colors: {
               brand: {

@@ -116,7 +116,7 @@ export const DashboardOcean: React.FC<DashboardOceanProps> = ({
             <h3 className="font-display font-semibold text-lg text-slate-900 tracking-tight flex items-center gap-2">
               <Activity className="w-5 h-5 text-sky-500" /> Delivery Trend
             </h3>
-            <span className="text-xs text-slate-400 bg-sky-50 px-3 py-1 rounded-full font-medium">Last 10 Days</span>
+            <span className="text-xs text-sky-700 bg-sky-100 border border-sky-200 px-3 py-1 rounded-full font-medium">Last 10 Days</span>
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">

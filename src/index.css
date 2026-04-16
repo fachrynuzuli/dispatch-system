@@ -9,6 +9,10 @@
   --brand-700: #a34729;
   --brand-800: #85351c;
   --brand-900: #6b2a17;
+  
+  --font-sans: 'Albert Sans';
+  --font-display: 'Spectral';
+  --font-mono: 'JetBrains Mono';
 }
 
 .theme-midnight {
@@ -22,6 +26,9 @@
   --brand-700: #334155;
   --brand-800: #1e293b;
   --brand-900: #0f172a;
+
+  --font-sans: 'JetBrains Mono';
+  --font-display: 'JetBrains Mono';
 }
 
 .theme-ocean {
@@ -35,6 +42,9 @@
   --brand-700: #0369a1;
   --brand-800: #075985;
   --brand-900: #0c4a6e;
+
+  --font-sans: 'Outfit';
+  --font-display: 'Outfit';
 }
 
 /* Midnight Theme: Dark mode overrides */
@@ -94,7 +104,7 @@ body {
 
 /* Markdown Enhancements */
 .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
-  font-family: 'Spectral', serif;
+  font-family: var(--font-display), serif;
   color: #85351c; /* brand-800 */
   margin-top: 1.2em;
   margin-bottom: 0.5em;
@@ -151,4 +161,13 @@ body {
   animation-play-state: paused;
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(217, 119, 87, 0.6);
+}
+
+/* Subtle Float Animation */
+@keyframes subtle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.animate-subtle-float {
+  animation: subtle-float 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
 }
