@@ -92,9 +92,10 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
               onClick={handleOptimize} 
               isLoading={loading}
               icon={<BrainCircuit className="w-5 h-5" />}
-              className="bg-brand-500 hover:bg-brand-600 text-white border-none shadow-soft-sm whitespace-nowrap w-full"
+              className="bg-brand-500 hover:bg-brand-600 text-white border-none shadow-soft-sm whitespace-nowrap w-full relative overflow-hidden"
               >
-              {loading ? 'Optimizing...' : 'Auto-Assign Fleet'}
+              {loading && <div className="shimmer-overlay"></div>}
+              <span className="relative z-10">{loading ? 'Optimizing...' : 'Auto-Assign Fleet'}</span>
               </Button>
               {loading && <AILoadingSparkle />}
             </div>
@@ -193,10 +194,10 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
 
           {/* Regular Pending List */}
           <div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 px-1">Pending Requests ({pendingRequests.length})</h3>
+            <h3 className="text-2xl font-display italic text-slate-900 mb-4 px-1">Pending Requests ({pendingRequests.length})</h3>
             <div className="space-y-3">
                 {pendingRequests.map(req => (
-                    <Card key={req.id} className="group hover:border-brand-200 transition-all">
+                    <Card key={req.id} className="group border-none shadow-none bg-slate-50/50 hover:bg-slate-100/50 transition-all">
                     <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
@@ -223,9 +224,9 @@ export const DispatchView: React.FC<DispatchViewProps> = ({ requests, trucks, dr
 
         {/* Right Column: Recent Activity / Assigned */}
         <div className="space-y-6">
-             <Card className="bg-slate-50/50">
+             <Card className="bg-slate-50/50 border-none shadow-none">
                  <CardContent>
-                     <h3 className="font-semibold text-slate-900 mb-4">Recently Assigned</h3>
+                     <h3 className="font-display italic text-xl text-slate-900 mb-4">Recently Assigned</h3>
                      <div className="space-y-4">
                          {assignedRequests.slice(0, 5).map(req => {
                              const assignedDriver = drivers.find(d => d.id === req.assignedDriverId);

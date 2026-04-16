@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Truck, ClipboardCheck, Map as MapIcon, Menu, X, Bell, AlertTriangle, Clock, CheckCircle, ChevronDown, LogOut, Settings, Users, Globe, Package } from 'lucide-react';
-import { ViewState, Truck as TruckType, Inspection, DispatchRequest, SparePart, InventoryStatus, InspectionDecision } from './types';
-import { MOCK_TRUCKS, MOCK_INSPECTIONS, MOCK_REQUESTS, MOCK_DRIVERS, MOCK_INVENTORY } from './services/mockData';
+import { LayoutDashboard, Truck, ClipboardCheck, Map as MapIcon, Menu, X, Bell, AlertTriangle, Clock, CheckCircle, ChevronDown, LogOut, Settings, Users, Globe, Package, Ship } from 'lucide-react';
+import { ViewState, Truck as TruckType, Inspection, DispatchRequest, SparePart, InventoryStatus, InspectionDecision, Vessel, VesselStatus } from './types';
+import { MOCK_TRUCKS, MOCK_INSPECTIONS, MOCK_REQUESTS, MOCK_DRIVERS, MOCK_INVENTORY, MOCK_VESSELS } from './services/mockData';
 import { AssetsView } from './views/AssetsView';
 import { InspectionsView } from './views/InspectionsView';
 import { DispatchView } from './views/DispatchView';
 import { DriversView } from './views/DriversView';
 import { LiveMapView } from './views/LiveMapView';
 import { InventoryView } from './views/InventoryView';
+import { VesselsView } from './views/VesselsView';
 import { GeminiAssistant } from './components/GeminiAssistant';
 import { HealthDistributionChart } from './components/HealthDistributionChart';
 import { Card, CardContent } from './components/ui/Card';
@@ -20,8 +21,15 @@ const App = () => {
   const [inspections, setInspections] = useState<Inspection[]>(MOCK_INSPECTIONS);
   const [requests, setRequests] = useState<DispatchRequest[]>(MOCK_REQUESTS);
   const [inventory, setInventory] = useState<SparePart[]>(MOCK_INVENTORY);
+  const [vessels, setVessels] = useState<Vessel[]>(MOCK_VESSELS);
   const [scrolled, setScrolled] = useState(false);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'info' | 'error'} | null>(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState('elegant');
+
+  useEffect(() => {
+    document.body.className = theme === 'elegant' ? '' : `theme-${theme}`;
+  }, [theme]);
 
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
     setToast({ message, type });
@@ -69,6 +77,22 @@ const App = () => {
   const handleManualAssign = (requestId: string, truckId: string, driverId: string) => {
     setRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: 'Assigned', assignedTruckId: truckId, assignedDriverId: driverId } : r));
     showToast(`Request ${requestId} assigned to Truck ${truckId}.`, 'success');
+  };
+
+  const handleGenerateVesselDispatch = (vessel: Vessel) => {
+    // Generate a new dispatch request for the vessel's cargo
+    const newRequest: DispatchRequest = {
+      id: `REQ-VSL-${Math.floor(Math.random() * 10000)}`,
+      customerName: `Port Operations (${vessel.name})`,
+      destination: vessel.destinationTerminal,
+      cargoWeight: vessel.cargoWeight,
+      requiredDate: new Date().toISOString().split('T')[0],
+      status: 'Pending'
+    };
+    
+    setRequests(prev => [newRequest, ...prev]);
+    setVessels(prev => prev.map(v => v.id === vessel.id ? { ...v, status: VesselStatus.UNLOADING } : v));
+    showToast(`Dispatch request generated for ${vessel.name} cargo.`, 'success');
   };
 
   const NavItem = ({ view, icon: Icon, label }: { view: ViewState, icon: any, label: string }) => (
@@ -158,6 +182,7 @@ const App = () => {
           <NavItem view="drivers" icon={Users} label="Drivers" />
           <NavItem view="inspections" icon={ClipboardCheck} label="Inspections" />
           <NavItem view="dispatch" icon={MapIcon} label="Dispatch" />
+          <NavItem view="vessels" icon={Ship} label="Port Operations" />
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100 bg-slate-50/50">
@@ -199,19 +224,50 @@ const App = () => {
             </button>
 
             {/* Profile Placeholder */}
-            <div 
-              onClick={() => showToast('Profile settings coming soon.', 'info')}
-              className="group flex items-center gap-4 cursor-pointer pl-6 border-l border-slate-200"
-            >
-               <div className="text-right hidden lg:block">
-                 <p className="text-sm font-semibold text-slate-900 group-hover:text-brand-600 transition-colors">Admin User</p>
-                 <p className="text-xs text-slate-500">Logistics Manager</p>
-               </div>
-               <div className="relative">
-                  <div className="w-10 h-10 bg-slate-900 rounded-full border border-slate-200 shadow-soft-sm group-hover:shadow-soft-md transition-all duration-300 group-hover:-translate-y-0.5 flex items-center justify-center text-white font-semibold">
-                    A
+            <div className="relative">
+              <div 
+                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                className="group flex items-center gap-4 cursor-pointer pl-6 border-l border-slate-200"
+              >
+                 <div className="text-right hidden lg:block">
+                   <p className="text-sm font-semibold text-slate-900 group-hover:text-brand-600 transition-colors">Admin User</p>
+                   <p className="text-xs text-slate-500">Logistics Manager</p>
+                 </div>
+                 <div className="relative">
+                    <div className="w-10 h-10 bg-slate-900 rounded-full border border-slate-200 shadow-soft-sm group-hover:shadow-soft-md transition-all duration-300 group-hover:-translate-y-0.5 flex items-center justify-center text-white font-semibold">
+                      A
+                    </div>
+                 </div>
+              </div>
+              
+              {profileMenuOpen && (
+                <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-soft-xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-2 border-b border-slate-100 mb-2">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Theme</p>
                   </div>
-               </div>
+                  <button 
+                    onClick={() => { setTheme('elegant'); setProfileMenuOpen(false); showToast('Theme set to Elegant Claude AI', 'success'); }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'elegant' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
+                  >
+                    <div className="w-3 h-3 rounded-full bg-[#D97757]"></div>
+                    Elegant Claude
+                  </button>
+                  <button 
+                    onClick={() => { setTheme('midnight'); setProfileMenuOpen(false); showToast('Theme set to Midnight', 'success'); }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'midnight' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
+                  >
+                    <div className="w-3 h-3 rounded-full bg-slate-900"></div>
+                    Midnight
+                  </button>
+                  <button 
+                    onClick={() => { setTheme('ocean'); setProfileMenuOpen(false); showToast('Theme set to Ocean', 'success'); }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'ocean' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
+                  >
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    Ocean
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -302,6 +358,7 @@ const App = () => {
           {currentView === 'drivers' && <DriversView drivers={activeDrivers} />}
           {currentView === 'inspections' && <InspectionsView inspections={inspections} trucks={activeTrucks} onUpdateInspection={handleUpdateInspection} />}
           {currentView === 'dispatch' && <DispatchView requests={requests} trucks={activeTrucks} drivers={activeDrivers} onManualAssign={handleManualAssign} />}
+          {currentView === 'vessels' && <VesselsView vessels={vessels} trucks={activeTrucks} onGenerateDispatch={handleGenerateVesselDispatch} onShowToast={showToast} />}
         </div>
       </main>
 

@@ -1,4 +1,4 @@
-import { Truck, TruckStatus, Inspection, InspectionDecision, DispatchRequest, Driver, SparePart, InventoryStatus } from '../types';
+import { Truck, TruckStatus, Inspection, InspectionDecision, DispatchRequest, Driver, SparePart, InventoryStatus, Vessel, VesselStatus } from '../types';
 
 // --- Data Generators ---
 
@@ -151,4 +151,11 @@ export const MOCK_INVENTORY: SparePart[] = [
   { id: 'PRT-006', name: 'Hydraulic Hose Assembly', category: 'Hydraulics', stockLevel: 15, minimumStock: 10, unitCost: 85, supplier: 'HydraFlex', status: InventoryStatus.IN_STOCK, lastRestocked: '2025-12-05' },
   { id: 'PRT-007', name: 'Steering Pump', category: 'Steering', stockLevel: 1, minimumStock: 3, unitCost: 450, supplier: 'AutoParts Wholesale', status: InventoryStatus.LOW_STOCK, lastRestocked: '2025-09-15' },
   { id: 'PRT-008', name: 'LED Headlamp Bulbs', category: 'Electrical', stockLevel: 45, minimumStock: 20, unitCost: 25, supplier: 'ElectroTruck', status: InventoryStatus.IN_STOCK, lastRestocked: '2025-12-10' },
+];
+
+export const MOCK_VESSELS: Vessel[] = [
+  { id: 'VSL-101', name: 'Oceanic Pioneer', type: 'Cargo Ship', eta: '2025-12-06T08:00:00Z', status: VesselStatus.ARRIVING, cargoType: 'Heavy Machinery', cargoWeight: 2500, destinationTerminal: 'North District Port' },
+  { id: 'VSL-102', name: 'Barge Alpha-7', type: 'Barge', eta: '2025-12-05T14:30:00Z', status: VesselStatus.DOCKED, cargoType: 'Construction Materials', cargoWeight: 850, destinationTerminal: 'South District Terminal' },
+  { id: 'VSL-103', name: 'Pacific Trader', type: 'Cargo Ship', eta: '2025-12-08T12:00:00Z', status: VesselStatus.IN_TRANSIT, cargoType: 'Raw Minerals', cargoWeight: 4200, destinationTerminal: 'East Port' },
+  { id: 'VSL-104', name: 'Barge Beta-2', type: 'Barge', eta: '2025-12-05T09:00:00Z', status: VesselStatus.UNLOADING, cargoType: 'Steel Coils', cargoWeight: 1200, destinationTerminal: 'Central Complex Dock' },
 ];

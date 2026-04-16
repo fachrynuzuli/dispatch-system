@@ -225,3 +225,47 @@ export const analyzeInventoryNeeds = async (inventory: SparePart[], trucks: Truc
     return "AI Analysis failed. Please review manually.";
   }
 };
+
+/**
+ * Analyzes incoming vessels and suggests port operations and dispatch readiness.
+ */
+export const analyzeVesselArrivals = async (vessels: any[], trucks: Truck[]): Promise<string> => {
+  if (!apiKey) return "API Key missing. Unable to perform AI analysis.";
+
+  const arrivingVessels = vessels.filter(v => v.status === 'Arriving' || v.status === 'In Transit');
+  const dockedVessels = vessels.filter(v => v.status === 'Docked' || v.status === 'Unloading');
+  const availableHeavyTrucks = trucks.filter(t => t.status === 'Available' && (t.model.includes('FH-16') || t.model.includes('R620')));
+
+  const prompt = `
+    You are a Port Operations & Logistics AI. Analyze the incoming vessel traffic and fleet readiness.
+    
+    Vessels Arriving Soon:
+    ${arrivingVessels.map(v => `- ${v.name} (${v.type}), Cargo: ${v.cargoWeight}t of ${v.cargoType}, ETA: ${v.eta}`).join('\n')}
+    
+    Vessels Currently Docked/Unloading:
+    ${dockedVessels.map(v => `- ${v.name} (${v.type}), Cargo: ${v.cargoWeight}t of ${v.cargoType}`).join('\n')}
+    
+    Fleet Readiness:
+    - Available Heavy Haul Trucks (130t-150t capacity): ${availableHeavyTrucks.length}
+    
+    Task:
+    Provide a compact, point-by-point reasoning using Markdown bullet points.
+    - Assess the immediate dispatch needs for the docked vessels.
+    - Predict the truck allocation required for the arriving vessels based on their cargo weight.
+    - Identify any potential bottlenecks (e.g., not enough heavy haulers for the incoming cargo).
+    - Provide actionable recommendations for the dispatch team to prepare for the incoming load.
+    
+    Keep the tone professional, proactive, and focused on seamless port-to-truck logistics.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+    });
+    return getText(response);
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return "AI Analysis failed. Please review manually.";
+  }
+};

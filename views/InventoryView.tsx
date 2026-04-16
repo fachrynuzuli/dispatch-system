@@ -116,12 +116,12 @@ export const InventoryView: React.FC<InventoryViewProps> = ({ inventory, trucks,
              <div className="overflow-x-auto">
                <table className="w-full text-left border-collapse">
                  <thead>
-                   <tr className="bg-slate-50 border-b border-slate-100 text-xs uppercase tracking-wider text-slate-500">
-                     <th className="p-4 font-medium">Part Details</th>
-                     <th className="p-4 font-medium">Category</th>
-                     <th className="p-4 font-medium text-right">Stock Level</th>
-                     <th className="p-4 font-medium">Status</th>
-                     <th className="p-4 font-medium text-right">Unit Cost</th>
+                   <tr className="border-b border-slate-200 text-sm text-slate-500">
+                     <th className="p-4 font-display italic font-medium">Part Details</th>
+                     <th className="p-4 font-display italic font-medium">Category</th>
+                     <th className="p-4 font-display italic font-medium text-right">Stock Level</th>
+                     <th className="p-4 font-display italic font-medium">Status</th>
+                     <th className="p-4 font-display italic font-medium text-right">Unit Cost</th>
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-slate-100">
@@ -162,7 +162,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({ inventory, trucks,
 
         {/* Right Column: AI Predictive Ordering */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="bg-white border-slate-200 shadow-soft-sm rounded-2xl sticky top-6">
+          <Card className="bg-slate-50/50 border-none shadow-none rounded-2xl sticky top-6">
             <CardHeader 
               title="Predictive Ordering"
               subtitle="AI-driven inventory intelligence"
@@ -182,9 +182,10 @@ export const InventoryView: React.FC<InventoryViewProps> = ({ inventory, trucks,
                   onClick={handleAnalyze} 
                   isLoading={isAnalyzing}
                   icon={<Sparkles className="w-4 h-4" />}
-                  className="bg-brand-500 hover:bg-brand-600 text-white border-none shadow-soft-sm w-full"
+                  className="bg-brand-500 hover:bg-brand-600 text-white border-none shadow-soft-sm w-full relative overflow-hidden"
                 >
-                  {isAnalyzing ? 'Analyzing Fleet Needs...' : 'Run Predictive Analysis'}
+                  {isAnalyzing && <div className="shimmer-overlay"></div>}
+                  <span className="relative z-10">{isAnalyzing ? 'Analyzing Fleet Needs...' : 'Run Predictive Analysis'}</span>
                 </Button>
                 {isAnalyzing && <AILoadingSparkle />}
               </div>

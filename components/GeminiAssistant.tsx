@@ -1,8 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';
 import { Sparkles, X, Send, Bot, ChevronUp } from 'lucide-react';
 import { Button } from './ui/Button';
 import { askFleetAssistant } from '../services/geminiService';
+
+const ClippyIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="1.5" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    {/* Paperclip wire (vertical) */}
+    <path d="M8 7v10a4 4 0 0 0 8 0V5a6 6 0 0 0-12 0v12a8 8 0 0 0 16 0V8" />
+    
+    {/* Eyes */}
+    <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1" />
+    <circle cx="14" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1" />
+    
+    {/* Pupils */}
+    <circle cx="10.5" cy="8" r="0.75" fill="currentColor" stroke="none" />
+    <circle cx="13.5" cy="8" r="0.75" fill="currentColor" stroke="none" />
+  </svg>
+);
 
 interface GeminiAssistantProps {
   contextData: string;
@@ -15,6 +38,65 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+
+  // Dragging State
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [dockSide, setDockSide] = useState<'left' | 'right'>('right');
+
+  useEffect(() => {
+    const padding = 24;
+    const btnSize = 64;
+    setPosition({ 
+      x: window.innerWidth - btnSize - padding, 
+      y: window.innerHeight - btnSize - padding 
+    });
+    setIsInitialized(true);
+  }, []);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    setIsDragging(true);
+    setHasMoved(false);
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isDragging) return;
+    setHasMoved(true);
+    setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    
+    const btnSize = 64;
+    const padding = 24;
+    let newX = position.x;
+    let newY = position.y;
+    
+    if (position.x + btnSize / 2 < window.innerWidth / 2) {
+      newX = padding;
+      setDockSide('left');
+    } else {
+      newX = window.innerWidth - btnSize - padding;
+      setDockSide('right');
+    }
+    
+    newY = Math.max(padding, Math.min(newY, window.innerHeight - btnSize - padding));
+    setPosition({ x: newX, y: newY });
+  };
+
+  const handleClick = () => {
+    if (!hasMoved) {
+      setIsOpen(!isOpen);
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -30,11 +112,13 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
     setIsTyping(false);
   };
 
+  if (!isInitialized) return null;
+
   return (
-    <div className={`fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none`}>
+    <div className="fixed inset-0 z-50 pointer-events-none">
       {/* Chat Window */}
       {isOpen && (
-        <div className="pointer-events-auto w-[360px] h-[500px] mb-4 bg-white rounded-2xl shadow-soft-xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
+        <div className={`absolute bottom-24 pointer-events-auto w-[360px] h-[500px] bg-white rounded-2xl shadow-soft-xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in duration-200 ${dockSide === 'left' ? 'left-6 slide-in-from-bottom-5' : 'right-6 slide-in-from-bottom-5'}`}>
           {/* Header */}
           <div className="p-4 bg-white border-b border-slate-200 flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -88,17 +172,19 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
 
       {/* Toggle Button */}
       <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="pointer-events-auto bg-slate-900 hover:bg-slate-800 text-white p-4 rounded-full shadow-soft-md transition-all hover:scale-105 active:scale-95 group flex items-center gap-2"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onClick={handleClick}
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          transition: isDragging ? 'none' : 'left 0.4s cubic-bezier(0.25, 1, 0.5, 1), top 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
+          touchAction: 'none'
+        }}
+        className="absolute pointer-events-auto bg-slate-900 text-white rounded-full breathing-btn flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing"
       >
-        <div className="relative">
-          <Sparkles className="w-6 h-6 text-brand-400" />
-          <span className="absolute -top-1 -right-1 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-400"></span>
-          </span>
-        </div>
-        {!isOpen && <span className="font-medium pr-1">Ask AI</span>}
+        <ClippyIcon className="w-8 h-8 text-brand-400" />
       </button>
     </div>
   );

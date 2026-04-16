@@ -89,7 +89,26 @@ export interface DispatchAssignment {
   confidenceScore: number;
 }
 
-export type ViewState = 'dashboard' | 'assets' | 'drivers' | 'inspections' | 'dispatch' | 'map' | 'inventory';
+export enum VesselStatus {
+  IN_TRANSIT = 'In Transit',
+  ARRIVING = 'Arriving',
+  DOCKED = 'Docked',
+  UNLOADING = 'Unloading',
+  DEPARTED = 'Departed'
+}
+
+export interface Vessel {
+  id: string;
+  name: string;
+  type: 'Barge' | 'Cargo Ship';
+  eta: string; // ISO date string or relative time
+  status: VesselStatus;
+  cargoType: string;
+  cargoWeight: number; // tons
+  destinationTerminal: string;
+}
+
+export type ViewState = 'dashboard' | 'assets' | 'drivers' | 'inspections' | 'dispatch' | 'map' | 'inventory' | 'vessels';
 
 export interface FilterOption {
   label: string;
