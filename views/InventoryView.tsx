@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { SearchFilter } from '../components/ui/SearchFilter';
-import { analyzeInventoryNeeds } from '../services/geminiService';
+import { analyzeInventoryNeeds } from '../services/openRouterService';
 import { Package, AlertCircle, TrendingDown, Sparkles, BrainCircuit, Plus, DollarSign } from 'lucide-react';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 

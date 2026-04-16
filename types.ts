@@ -114,3 +114,66 @@ export interface FilterOption {
   label: string;
   value: string;
 }
+
+// ─── Port Operations Types ──────────────────────────────────────────────────
+
+export interface EquipmentAvailability {
+  unit: string;
+  availability: number; // percentage
+  downtime: number; // hours
+}
+
+export interface EquipmentUtilization {
+  unit: string;
+  utilization: number; // percentage
+  availableHours: number;
+  workingHours: number;
+}
+
+export interface LoadingRate {
+  name: string; // unit, operator, wood type, or barge size
+  rate: number; // t/h
+  target: number;
+}
+
+export interface FuelEfficiency {
+  name: string;
+  efficiency: number; // L/t
+  target: number;
+}
+
+export type BargeStatus = 'done' | 'live' | 'incoming';
+
+export interface BargeOperation {
+  name: string;
+  loadingPoint: string;
+  attachTime: string | null;
+  detachTime: string | null;
+  budgetDuration: string;
+  actualDuration: string | null;
+  status: BargeStatus;
+}
+
+export interface DeliveryTrendPoint {
+  day: string;
+  target: number;
+  actual: number;
+}
+
+export interface WoodSpecies {
+  code: string;
+  fullName: string;
+  percentage: number;
+  tonnage: number;
+}
+
+export interface StackLoadingTime {
+  stackType: string;
+  avgTime: string;
+  trips: number;
+}
+
+export interface CargoType {
+  name: string;
+  color: string;
+}

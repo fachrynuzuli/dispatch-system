@@ -8,7 +8,7 @@ import { Button } from '../components/ui/Button';
 import { SearchFilter } from '../components/ui/SearchFilter';
 import { Truck as TruckIcon, Activity, Calendar, FileText, BarChart3, TrendingUp, AlertTriangle, Wrench } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, Tooltip, XAxis } from 'recharts';
-import { predictAssetLifespan } from '../services/geminiService';
+import { predictAssetLifespan } from '../services/openRouterService';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 import { MaintenanceCalendar } from '../components/ui/MaintenanceCalendar';
 

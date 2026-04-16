@@ -3,7 +3,7 @@ import { Vessel, VesselStatus, Truck } from '../types';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Ship, Anchor, Navigation, Sparkles, Clock, Package, MapPin } from 'lucide-react';
-import { analyzeVesselArrivals } from '../services/geminiService';
+import { analyzeVesselArrivals } from '../services/openRouterService';
 import Markdown from 'react-markdown';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 

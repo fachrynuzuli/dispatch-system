@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';
 import { Sparkles, X, Send, Bot, ChevronUp } from 'lucide-react';
 import { Button } from './ui/Button';
-import { askFleetAssistant } from '../services/geminiService';
+import { askFleetAssistant } from '../services/openRouterService';
 
 const ClippyIcon = ({ className }: { className?: string }) => (
   <svg 

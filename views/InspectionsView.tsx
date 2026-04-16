@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { SearchFilter } from '../components/ui/SearchFilter';
-import { analyzeInspection } from '../services/geminiService';
+import { analyzeInspection } from '../services/openRouterService';
 import { AlertCircle, CheckCircle, Sparkles, Wrench, Calendar, Gauge } from 'lucide-react';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 

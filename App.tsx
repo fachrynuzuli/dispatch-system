@@ -9,8 +9,10 @@ import { DriversView } from './views/DriversView';
 import { LiveMapView } from './views/LiveMapView';
 import { InventoryView } from './views/InventoryView';
 import { VesselsView } from './views/VesselsView';
+import { DashboardElegant } from './views/DashboardElegant';
+import { DashboardMidnight } from './views/DashboardMidnight';
+import { DashboardOcean } from './views/DashboardOcean';
 import { GeminiAssistant } from './components/GeminiAssistant';
-import { HealthDistributionChart } from './components/HealthDistributionChart';
 import { Card, CardContent } from './components/ui/Card';
 
 const App = () => {
@@ -109,36 +111,7 @@ const App = () => {
     </button>
   );
 
-  const getRecentActivities = () => [
-    { 
-      title: "Trip Finished: RTP0231", 
-      desc: "Delivered 140t Wood to Alpha Port", 
-      time: "10 mins ago",
-      icon: CheckCircle,
-      color: "text-emerald-500"
-    },
-    { 
-      title: "Delay Alert: BDP1102", 
-      desc: "Stuck at South District access road (Traffic)", 
-      time: "45 mins ago",
-      icon: Clock,
-      color: "text-amber-500"
-    },
-    { 
-      title: "Accident Report: RMP4005", 
-      desc: "Minor scrape at Workshop Yard B", 
-      time: "2 hours ago",
-      icon: AlertTriangle,
-      color: "text-rose-500"
-    },
-    { 
-      title: "Inspection Passed: RTP0550", 
-      desc: "Ready for dispatch (Heavy Haul)", 
-      time: "3 hours ago",
-      icon: ClipboardCheck,
-      color: "text-brand-500"
-    },
-  ];
+
 
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col md:flex-row font-sans text-slate-900">
@@ -273,83 +246,32 @@ const App = () => {
         </header>
 
         <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24 h-full">
-          {currentView === 'dashboard' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { label: 'Active Trucks', value: activeTrucks.filter(t => t.status === 'Available' || t.status === 'On Trip').length, sub: `/ ${activeTrucks.length} Total`, color: 'text-brand-600' },
-                  { label: 'Active Drivers', value: activeDrivers.filter(d => d.status === 'Available').length, sub: 'Ready for Dispatch', color: 'text-slate-900' },
-                  { label: 'Trips Completed', value: '1,284', sub: 'Dec 2025', color: 'text-slate-900' },
-                  { label: 'Fleet Health', value: '94.2', sub: 'Avg Score', color: 'text-slate-900' }
-                ].map((stat, i) => (
-                  <Card key={i} interactive className="bg-white">
-                    <CardContent className="p-6">
-                      <p className="text-sm font-medium text-slate-500">{stat.label}</p>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <span className={`text-4xl font-display font-semibold tracking-tight ${stat.color}`}>{stat.value}</span>
-                      </div>
-                      <span className="text-xs text-slate-400 mt-3 block">{stat.sub}</span>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <Card className="bg-brand-50 border border-brand-200 shadow-soft-sm lg:col-span-1 overflow-hidden relative group cursor-pointer hover:-translate-y-1 transition-all duration-300">
-                  <CardContent className="h-full flex flex-col justify-center items-start p-8 relative z-10">
-                    <div className="mb-6 p-4 bg-white rounded-2xl border border-brand-100 shadow-soft-sm group-hover:scale-110 transition-transform duration-300">
-                      <Truck className="w-8 h-8 text-brand-600" />
-                    </div>
-                    <h2 className="text-2xl font-display font-semibold mb-3 tracking-tight text-slate-900">Optimization Ready</h2>
-                    <p className="text-slate-700 mb-8 max-w-xs leading-relaxed text-sm">
-                      {requests.filter(r => r.status === 'Pending').length} pending dispatch requests can be optimized with available assets using Gemini AI.
-                    </p>
-                    <button 
-                      onClick={() => setCurrentView('dispatch')}
-                      className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-slate-800 transition-all active:scale-95 shadow-soft-sm"
-                    >
-                      Go to Dispatch
-                    </button>
-                  </CardContent>
-                </Card>
-
-                {/* Health Chart Widget */}
-                <div className="lg:col-span-1">
-                   <HealthDistributionChart trucks={activeTrucks} />
-                </div>
-
-                <Card className="lg:col-span-1 h-full bg-white">
-                  <CardContent>
-                    <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
-                      <h3 className="font-display font-semibold text-lg text-slate-900 tracking-tight flex items-center gap-2">
-                        <span className="relative flex h-2.5 w-2.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-500"></span>
-                        </span>
-                        Live Feed
-                      </h3>
-                      <button onClick={() => showToast('Activity log expanded view coming soon.', 'info')} className="text-xs font-medium text-slate-500 hover:text-brand-600 transition-colors">View All</button>
-                    </div>
-                    <div className="space-y-4">
-                      {getRecentActivities().map((item, i) => (
-                        <div key={i} className="flex gap-4 group cursor-default p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                          <div className={`mt-1 p-2 bg-white rounded-xl border border-slate-100 shadow-soft-sm`}>
-                            <item.icon className={`w-5 h-5 ${item.color}`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                              <p className="text-sm font-semibold text-slate-900 truncate pr-2 group-hover:text-brand-600 transition-colors">{item.title}</p>
-                              <span className="text-xs text-slate-400 whitespace-nowrap">{item.time}</span>
-                            </div>
-                            <p className="text-xs text-slate-500 mt-1 line-clamp-1">{item.desc}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+          {currentView === 'dashboard' && theme === 'elegant' && (
+            <DashboardElegant
+              trucks={activeTrucks}
+              drivers={activeDrivers}
+              requests={requests}
+              vessels={vessels}
+              onNavigate={(view) => setCurrentView(view as ViewState)}
+            />
+          )}
+          {currentView === 'dashboard' && theme === 'midnight' && (
+            <DashboardMidnight
+              trucks={activeTrucks}
+              drivers={activeDrivers}
+              requests={requests}
+              vessels={vessels}
+              onNavigate={(view) => setCurrentView(view as ViewState)}
+            />
+          )}
+          {currentView === 'dashboard' && theme === 'ocean' && (
+            <DashboardOcean
+              trucks={activeTrucks}
+              drivers={activeDrivers}
+              requests={requests}
+              vessels={vessels}
+              onNavigate={(view) => setCurrentView(view as ViewState)}
+            />
           )}
 
           {currentView === 'map' && <LiveMapView trucks={activeTrucks} />}

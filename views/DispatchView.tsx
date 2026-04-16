@@ -5,7 +5,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { SearchFilter } from '../components/ui/SearchFilter';
-import { optimizeDispatch } from '../services/geminiService';
+import { optimizeDispatch } from '../services/openRouterService';
 import { MapPin, Package, BrainCircuit, ArrowRight, Check, X, Truck as TruckIcon, User, ShieldCheck } from 'lucide-react';
 import { AILoadingSparkle } from '../components/ui/AILoadingSparkle';
 import { Modal } from '../components/ui/Modal';
