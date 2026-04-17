@@ -1,27 +1,17 @@
 import { Inspection, Truck, DispatchRequest, DispatchAssignment, Driver, SparePart } from "../types";
 
-const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const PROXY_URL = "/.netlify/functions/openrouter-proxy";
 
 // ─── Model Routing Strategy ────────────────────────────────────────────────
-// PAID: Safety-critical tasks (dispatch optimization, inspection analysis)
-// FREE: General chat, summaries, predictions — high weekly token quota
 const MODELS = {
   paid: "google/gemini-2.5-flash-lite",   // $0.10/$0.40 per M tokens, 1M context
   free: "openrouter/elephant-alpha",       // $0, 221B weekly tokens, 262K context
 } as const;
 
-const getApiKey = (): string => process.env.OPENROUTER_API_KEY || '';
-
-/**
- * Core OpenRouter chat completion call.
- */
 const chatCompletion = async (
   prompt: string,
   options?: { jsonMode?: boolean; model?: string }
 ): Promise<string> => {
-  const apiKey = getApiKey();
-  if (!apiKey) return "API Key missing. Set OPENROUTER_API_KEY in your .env file.";
-
   const body: Record<string, any> = {
     model: options?.model || MODELS.free,
     messages: [{ role: "user", content: prompt }],
@@ -32,27 +22,24 @@ const chatCompletion = async (
   }
 
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(PROXY_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": window.location.origin,
-        "X-Title": "Fleet Dispatch System",
       },
       body: JSON.stringify(body),
     });
 
     if (!response.ok) {
       const err = await response.text();
-      console.error("OpenRouter API Error:", response.status, err);
+      console.error("AI Proxy Error:", response.status, err);
       return `AI service error (${response.status}). Please try again.`;
     }
 
     const data = await response.json();
     return data.choices?.[0]?.message?.content || "No analysis available.";
   } catch (error) {
-    console.error("OpenRouter Error:", error);
+    console.error("AI Proxy Error:", error);
     return "AI Analysis failed. Please check your connection and try again.";
   }
 };
@@ -93,11 +80,6 @@ export const optimizeDispatch = async (
   trucks: Truck[],
   drivers: Driver[]
 ): Promise<DispatchAssignment[]> => {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    console.error("API Key missing");
-    return [];
-  }
 
   const availableTrucks = trucks.filter(t => t.status === 'Available');
   const availableDrivers = drivers.filter(d => d.status === 'Available' && d.fatigueLevel !== 'High');
