@@ -28,7 +28,7 @@ export const handler: Handler = async (event) => {
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": event.headers.referer || "https://fleet-dispatch.netlify.app",
+        "HTTP-Referer": event.headers.referer || "https://ai-fds.netlify.app",
         "X-Title": "Fleet Dispatch System (Secure Proxy)",
       },
       body: event.body,
