@@ -3,45 +3,79 @@ import { Inspection, Truck, DispatchRequest, DispatchAssignment, Driver, SparePa
 const PROXY_URL = "/.netlify/functions/openrouter-proxy";
 
 // ─── Model Routing Strategy ────────────────────────────────────────────────
-const MODELS = {
-  paid: "google/gemini-2.5-flash-lite",   // $0.10/$0.40 per M tokens, 1M context
-  free: "openrouter/elephant-alpha",       // $0, 221B weekly tokens, 262K context
-} as const;
+const MODELS_PAID = [
+  "deepseek/deepseek-v3.2",
+  "google/gemini-2.5-flash-lite",
+  "minimax/minimax-m2.5"
+];
+
+const MODELS_FREE = [
+  "moonshotai/kimi-k2.5",
+  "z-ai/glm-4.5-air:free",
+  "google/gemma-4-31b-it:free",
+  ...MODELS_PAID
+];
 
 const chatCompletion = async (
   prompt: string,
-  options?: { jsonMode?: boolean; model?: string }
+  options?: { jsonMode?: boolean; model?: string | string[]; timeout?: number }
 ): Promise<string> => {
-  const body: Record<string, any> = {
-    model: options?.model || MODELS.free,
-    messages: [{ role: "user", content: prompt }],
-  };
+  const modelList = Array.isArray(options?.model)
+    ? options.model
+    : [options?.model || MODELS_FREE[0]];
 
-  if (options?.jsonMode) {
-    body.response_format = { type: "json_object" };
-  }
+  const timeoutMs = options?.timeout || 4000; // Default 4s for general tasks
 
-  try {
-    const response = await fetch(PROXY_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+  for (const modelId of modelList) {
+    const body: Record<string, any> = {
+      model: modelId,
+      messages: [{ role: "user", content: prompt }],
+    };
 
-    if (!response.ok) {
-      const err = await response.text();
-      console.error("AI Proxy Error:", response.status, err);
-      return `AI service error (${response.status}). Please try again.`;
+    if (options?.jsonMode) {
+      body.response_format = { type: "json_object" };
     }
 
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || "No analysis available.";
-  } catch (error) {
-    console.error("AI Proxy Error:", error);
-    return "AI Analysis failed. Please check your connection and try again.";
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(PROXY_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const err = await response.text();
+        console.warn(`Model ${modelId} failed (${response.status}): ${err}. Trying next...`);
+        continue;
+      }
+
+      const data = await response.json();
+      
+      // OpenRouter can return 200 with an error object (e.g. rate limit or model down)
+      if (data.error) {
+        console.warn(`Model ${modelId} returned error:`, data.error.message || data.error);
+        continue;
+      }
+
+      return data.choices?.[0]?.message?.content || "No analysis available.";
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.warn(`Model ${modelId} timed out after ${timeoutMs}ms. Trying next...`);
+      } else {
+        console.warn(`Model ${modelId} fetch error:`, error);
+      }
+      continue;
+    }
   }
+
+  return "AI service is currently unavailable. Please try again later.";
 };
 
 /**
@@ -68,8 +102,8 @@ export const analyzeInspection = async (inspection: Inspection, truck: Truck): P
     Keep the tone professional and safety-first.
   `;
 
-  // PAID — safety-critical decision (Workshop vs Dispatch)
-  return chatCompletion(prompt, { model: MODELS.paid });
+  // PAID — safety-critical decision (Workshop vs Dispatch). High patience (10s).
+  return chatCompletion(prompt, { model: MODELS_PAID, timeout: 10000 });
 };
 
 /**
@@ -130,12 +164,22 @@ export const optimizeDispatch = async (
   `;
 
   try {
-    // PAID — structured JSON dispatch optimization requires high accuracy
-    const result = await chatCompletion(prompt, { jsonMode: true, model: MODELS.paid });
+    // PAID — structured JSON dispatch optimization requires high accuracy and patience (12s)
+    // If the model returns invalid JSON, the loop in chatCompletion won't catch it, 
+    // so we handle it here if we want to force a fallback, but the current chatCompletion 
+    // is model-centric. For now, let's keep it simple but with high patience.
+    const result = await chatCompletion(prompt, { 
+      jsonMode: true, 
+      model: MODELS_PAID, 
+      timeout: 12000 
+    });
+    
     const parsed = JSON.parse(result);
     return Array.isArray(parsed) ? parsed : parsed.assignments || [];
   } catch (error) {
     console.error("Dispatch Optimization Parse Error:", error);
+    // If JSON fails, we don't have an easy way to "continue" the loop from here 
+    // without refactoring chatCompletion further. For now, returning empty array.
     return [];
   }
 };
@@ -157,8 +201,8 @@ export const predictAssetLifespan = async (truck: Truck): Promise<string> => {
     - Replacement recommendation (Keep, Refurbish, or Plan Disposal).
   `;
 
-  // FREE — text summary, no safety implications
-  return chatCompletion(prompt, { model: MODELS.free });
+  // PAID — proactive asset management via button click
+  return chatCompletion(prompt, { model: MODELS_PAID, timeout: 10000 });
 };
 
 /**
@@ -167,7 +211,7 @@ export const predictAssetLifespan = async (truck: Truck): Promise<string> => {
 export const askFleetAssistant = async (question: string, contextData: string): Promise<string> => {
   const prompt = `Context: ${contextData}\n\nUser Question: ${question}\n\nAnswer as a helpful fleet assistant. Use compact, point-by-point Markdown formatting for your reasoning and explanations.`;
   // FREE — general Q&A chat
-  return chatCompletion(prompt, { model: MODELS.free });
+  return chatCompletion(prompt, { model: MODELS_FREE });
 };
 
 /**
@@ -200,8 +244,8 @@ export const analyzeInventoryNeeds = async (inventory: SparePart[], trucks: Truc
     Keep the tone professional, proactive, and focused on preventing fleet downtime.
   `;
 
-  // FREE — inventory summary, no safety implications
-  return chatCompletion(prompt, { model: MODELS.free });
+  // PAID — inventory logistics via button click
+  return chatCompletion(prompt, { model: MODELS_PAID, timeout: 10000 });
 };
 
 /**
@@ -234,6 +278,6 @@ export const analyzeVesselArrivals = async (vessels: any[], trucks: Truck[]): Pr
     Keep the tone professional, proactive, and focused on seamless port-to-truck logistics.
   `;
 
-  // FREE — port operations summary
-  return chatCompletion(prompt, { model: MODELS.free });
+  // PAID — port operations summary via button click
+  return chatCompletion(prompt, { model: MODELS_PAID, timeout: 10000 });
 };
