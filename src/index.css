@@ -80,7 +80,47 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-/* Custom Scrollbar */
+
+/* ─── Focus Visible ───────────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+
+/* Suppress default focus ring for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ─── Skip to Content ─────────────────────────────────────────────────────── */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--brand-500);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 0 0 8px 8px;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ─── Custom Scrollbar ────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -95,14 +135,16 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8; 
 }
-.glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+
+/* Midnight theme scrollbar */
+.theme-midnight ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.theme-midnight ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
-/* Markdown Enhancements */
+/* ─── Markdown Enhancements ───────────────────────────────────────────────── */
 .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
   font-family: var(--font-display), serif;
   color: #85351c; /* brand-800 */
@@ -123,7 +165,9 @@ body {
   margin-bottom: 0.25em;
 }
 
-/* Shimmer Animation */
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+/* Shimmer */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -195,4 +239,39 @@ body {
 
 .buddy-jump {
   animation: buddy-jump 1.5s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+/* Toast exit animation */
+@keyframes toast-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.toast-exiting {
+  animation: toast-exit 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .shimmer-overlay,
+  .breathing-btn,
+  .buddy-base,
+  .buddy-jump,
+  .animate-subtle-float {
+    animation: none !important;
+  }
 }

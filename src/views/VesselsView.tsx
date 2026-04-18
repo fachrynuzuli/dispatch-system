@@ -56,8 +56,8 @@ export const VesselsView: React.FC<VesselsViewProps> = ({ vessels, trucks, onGen
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-display italic text-slate-900">Port Operations</h1>
-          <p className="text-slate-500 mt-1">Incoming vessels and barge integration</p>
+          <h2 className="text-2xl font-display font-semibold tracking-tight text-slate-900">Port Operations</h2>
+          <p className="text-sm text-slate-500 mt-1">Incoming vessels and barge integration</p>
         </div>
         <Button 
           onClick={() => onShowToast("Port schedule sync initiated", "info")}

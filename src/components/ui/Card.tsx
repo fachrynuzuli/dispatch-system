@@ -23,6 +23,13 @@ export const Card: React.FC<CardProps> = ({ children, className = '', onClick, g
     <div 
       className={`${baseClasses} ${styleClasses} ${interactionClasses} ${className}`}
       onClick={onClick}
+      tabIndex={(onClick || interactive) ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       {children}
     </div>

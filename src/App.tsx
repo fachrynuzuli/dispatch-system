@@ -26,8 +26,8 @@ const App = () => {
   const [vessels, setVessels] = useState<Vessel[]>(MOCK_VESSELS);
   const [scrolled, setScrolled] = useState(false);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'info' | 'error'} | null>(null);
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState('ocean');
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const [theme, setTheme] = useState('elegant');
 
   useEffect(() => {
     document.body.className = theme === 'elegant' ? '' : `theme-${theme}`;
@@ -35,7 +35,33 @@ const App = () => {
 
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => {
+        const toastEl = document.getElementById('global-toast');
+        if (toastEl) toastEl.classList.add('toast-exiting');
+        setTimeout(() => setToast(null), 250);
+    }, 3000);
+  };
+
+  const viewLabels: Record<ViewState, string> = {
+    dashboard: 'Dashboard',
+    map: 'Live Operations Map',
+    assets: 'Fleet Assets',
+    inventory: 'Spare Parts',
+    drivers: 'Driver Workforce',
+    inspections: 'Vehicle Inspections',
+    dispatch: 'Dispatch Command Center',
+    vessels: 'Port Operations'
+  };
+  
+  const viewSubtitles: Record<ViewState, string> = {
+    dashboard: 'System Overview & Analytics',
+    map: 'Real-time telemetry and vehicle positioning',
+    assets: 'Vehicle health and lifecycle management',
+    inventory: 'Stock optimization and predictive ordering',
+    drivers: 'Safety, fatigue, and certification tracking',
+    inspections: 'Pre-trip checks and repair authorization',
+    dispatch: 'AI-assisted routing and load assignment',
+    vessels: 'Incoming shipments and barrage coordination'
   };
   
   // Simulated context string for the AI Assistant based on current data
@@ -99,6 +125,7 @@ const App = () => {
 
   const NavItem = ({ view, icon: Icon, label }: { view: ViewState, icon: any, label: string }) => (
     <button
+      aria-current={currentView === view ? 'page' : undefined}
       onClick={() => { setCurrentView(view); setMobileMenuOpen(false); }}
       className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group overflow-hidden ${
         currentView === view 
@@ -123,6 +150,7 @@ const App = () => {
           FDS Mobile
         </div>
         <button 
+          aria-label="Toggle mobile menu"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
           className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg active:scale-95 transition-all"
         >
@@ -132,7 +160,7 @@ const App = () => {
 
       {/* Sidebar / Navigation */}
       <aside className={`
-        fixed inset-0 z-20 bg-white/95 backdrop-blur-2xl md:static md:w-64 md:bg-white md:border-r md:border-slate-100 md:h-screen transition-transform duration-300
+        fixed inset-0 z-20 bg-white/95 backdrop-blur-2xl md:static md:w-64 md:bg-white md:border-r md:border-slate-100 md:h-screen transition-transform duration-300 flex flex-col
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-6 hidden md:flex items-center gap-3 mb-6 border-b border-slate-200">
@@ -158,7 +186,7 @@ const App = () => {
           <NavItem view="vessels" icon={Ship} label="Port Operations" />
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100 bg-slate-50/50">
+        <div className="mt-auto p-4 border-t border-slate-100 bg-slate-50/50">
           <div className="bg-white border border-slate-100 rounded-2xl p-4 group hover:shadow-soft-md transition-all cursor-pointer">
              <div className="flex items-center justify-between mb-2">
                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">System Status</p>
@@ -182,13 +210,14 @@ const App = () => {
           scrolled ? 'bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-soft-sm' : 'bg-transparent border-b border-transparent'
         }`}>
           <div>
-            <h1 className="text-2xl font-display font-semibold text-slate-900 tracking-tight">{currentView === 'map' ? 'Live Operations Map' : currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h1>
-            <p className="text-sm text-slate-500 mt-1">Reimagining AI-first Fleet Dispatch System</p>
+            <h1 className="text-2xl font-display font-semibold text-slate-900 tracking-tight">{viewLabels[currentView]}</h1>
+            <p className="text-sm text-slate-500 mt-1">{viewSubtitles[currentView]}</p>
           </div>
           
           <div className="flex items-center gap-6">
             {/* Notification Bell */}
             <button 
+              aria-label="Notifications"
               onClick={() => showToast('No new notifications at this time.', 'info')}
               className="group relative p-3 bg-white border border-slate-100 rounded-full hover:shadow-soft-md hover:-translate-y-0.5 transition-all"
             >
@@ -196,12 +225,52 @@ const App = () => {
               <span className="absolute top-2 right-2 w-2 h-2 bg-brand-500 rounded-full group-hover:scale-110 transition-transform duration-200"></span>
             </button>
 
+            {/* Theme Toggle */}
+            <div className="relative border-l border-slate-200 pl-6">
+              <button 
+                aria-label="Toggle theme"
+                onClick={() => setThemeMenuOpen(!themeMenuOpen)}
+                className="group relative p-3 bg-white border border-slate-100 rounded-full hover:shadow-soft-md hover:-translate-y-0.5 transition-all text-slate-600"
+              >
+                <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
+              </button>
+              
+              {themeMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setThemeMenuOpen(false)} />
+                  <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-soft-xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                    <div className="px-4 py-2 border-b border-slate-100 mb-2">
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">UI Theme</p>
+                    </div>
+                    <button 
+                      onClick={() => { setTheme('elegant'); setThemeMenuOpen(false); showToast('Theme set to Elegant Claude AI', 'success'); }}
+                      className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'elegant' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      <div className="w-3 h-3 rounded-full bg-[#D97757]"></div>
+                      Elegant Claude
+                    </button>
+                    <button 
+                      onClick={() => { setTheme('midnight'); setThemeMenuOpen(false); showToast('Theme set to Midnight', 'success'); }}
+                      className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'midnight' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      <div className="w-3 h-3 rounded-full bg-slate-900"></div>
+                      War Room (Midnight)
+                    </button>
+                    <button 
+                      onClick={() => { setTheme('ocean'); setThemeMenuOpen(false); showToast('Theme set to Ocean', 'success'); }}
+                      className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'ocean' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      Mission Control (Ocean)
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* Profile Placeholder */}
             <div className="relative">
-              <div 
-                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                className="group flex items-center gap-4 cursor-pointer pl-6 border-l border-slate-200"
-              >
+              <div className="group flex items-center gap-4 cursor-pointer pl-6 border-l border-slate-200">
                  <div className="text-right hidden lg:block">
                    <p className="text-sm font-semibold text-slate-900 group-hover:text-brand-600 transition-colors">Admin User</p>
                    <p className="text-xs text-slate-500">Logistics Manager</p>
@@ -212,35 +281,6 @@ const App = () => {
                     </div>
                  </div>
               </div>
-              
-              {profileMenuOpen && (
-                <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-soft-xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-4 py-2 border-b border-slate-100 mb-2">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Theme</p>
-                  </div>
-                  <button 
-                    onClick={() => { setTheme('elegant'); setProfileMenuOpen(false); showToast('Theme set to Elegant Claude AI', 'success'); }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'elegant' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-[#D97757]"></div>
-                    Elegant Claude
-                  </button>
-                  <button 
-                    onClick={() => { setTheme('midnight'); setProfileMenuOpen(false); showToast('Theme set to Midnight', 'success'); }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'midnight' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-slate-900"></div>
-                    Midnight
-                  </button>
-                  <button 
-                    onClick={() => { setTheme('ocean'); setProfileMenuOpen(false); showToast('Theme set to Ocean', 'success'); }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${theme === 'ocean' ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                    Ocean
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </header>
@@ -288,7 +328,7 @@ const App = () => {
 
       {/* Global Toast Notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div id="global-toast" className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
           <div className={`px-6 py-4 rounded-xl shadow-lg border flex items-center gap-3 ${
             toast.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
             toast.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' :

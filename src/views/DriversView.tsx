@@ -34,8 +34,8 @@ export const DriversView: React.FC<DriversViewProps> = ({ drivers }) => {
     <div className="animate-in fade-in duration-500 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-           <h2 className="text-xl font-bold text-slate-900">Driver Workforce</h2>
-           <p className="text-slate-500 text-sm">Manage human capital, safety, and fatigue.</p>
+           <h2 className="text-2xl font-display font-semibold tracking-tight text-slate-900">Driver Workforce</h2>
+           <p className="text-sm text-slate-500 mt-1">Safety, fatigue and certification management</p>
         </div>
         <div className="w-full md:w-auto">
           <SearchFilter

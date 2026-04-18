@@ -69,8 +69,8 @@ export const AssetsView: React.FC<AssetsViewProps> = ({ trucks, onUpdateTruck })
       {/* Top Bar with Stats & Filter */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-end">
         <div>
-           <h2 className="text-2xl font-bold text-slate-900">Fleet Assets</h2>
-           <p className="text-slate-500">Manage total {trucks.length} units</p>
+           <h2 className="text-2xl font-display font-semibold tracking-tight text-slate-900">Fleet Assets</h2>
+           <p className="text-sm text-slate-500 mt-1">{trucks.length} units across fleet</p>
         </div>
         <div className="w-full md:w-auto">
           <SearchFilter 

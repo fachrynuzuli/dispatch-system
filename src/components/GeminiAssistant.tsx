@@ -55,6 +55,11 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isInitialized, setIsInitialized] = useState(false);
   const [dockSide, setDockSide] = useState<'left' | 'right'>('right');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping, isOpen]);
 
   useEffect(() => {
     const padding = 24;
@@ -197,6 +202,7 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
@@ -208,7 +214,7 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             />
-            <Button size="sm" onClick={handleSend} disabled={!input.trim() || isTyping}>
+            <Button aria-label="Send message" size="sm" onClick={handleSend} disabled={!input.trim() || isTyping}>
               <Send className="w-4 h-4" />
             </Button>
           </div>
@@ -227,7 +233,8 @@ export const GeminiAssistant: React.FC<GeminiAssistantProps> = ({ contextData })
           transition: isDragging ? 'none' : 'left 0.4s cubic-bezier(0.25, 1, 0.5, 1), top 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
           touchAction: 'none'
         }}
-        className={`absolute pointer-events-auto bg-slate-900 text-white rounded-full flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing hover:bg-slate-800 buddy-base ${wantsAttention ? 'buddy-jump' : ''}`}
+        aria-label="Toggle AI assistant"
+        className={`absolute pointer-events-auto group bg-slate-900 text-white rounded-full flex items-center justify-center w-16 h-16 cursor-grab active:cursor-grabbing hover:bg-slate-800 buddy-base ${wantsAttention ? 'buddy-jump' : ''}`}
       >
         <MentorIcon className="w-8 h-8 text-brand-400" />
         

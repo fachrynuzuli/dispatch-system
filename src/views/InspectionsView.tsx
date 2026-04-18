@@ -43,8 +43,13 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-500 items-start">
-      {/* List */}
+    <div className="animate-in fade-in duration-500 space-y-6">
+      <div>
+        <h2 className="text-2xl font-display font-semibold tracking-tight text-slate-900">Vehicle Inspections</h2>
+        <p className="text-sm text-slate-500 mt-1">Review inspection reports and approve for dispatch</p>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* List */}
       <div className="lg:col-span-1 lg:h-[calc(100vh-9rem)] flex flex-col">
         <div className="sticky top-0 bg-[#f8fafc]/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-100/50 space-y-3">
            <h2 className="text-lg font-semibold text-slate-900">Pending Review</h2>
@@ -154,7 +159,7 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      Gemini Recommendation
+                      AI Recommendation
                     </div>
                     <div className="text-sm text-slate-700 markdown-body prose prose-sm max-w-none">
                       <Markdown>{analysisResult}</Markdown>
@@ -223,6 +228,7 @@ export const InspectionsView: React.FC<InspectionsViewProps> = ({ inspections, t
             Select an inspection report to review
           </div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -64,8 +64,8 @@ export const MaintenanceCalendar = () => {
       <div className="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
         <h4 className="font-display font-semibold text-slate-900 text-lg tracking-tight">{monthNames[currentMonth]} {currentYear}</h4>
         <div className="flex gap-2">
-          <button onClick={prevMonth} className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 transition-colors"><ChevronLeft className="w-5 h-5" /></button>
-          <button onClick={nextMonth} className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 transition-colors"><ChevronRight className="w-5 h-5" /></button>
+          <button aria-label="Previous month" onClick={prevMonth} className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 transition-colors"><ChevronLeft className="w-5 h-5" /></button>
+          <button aria-label="Next month" onClick={nextMonth} className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 transition-colors"><ChevronRight className="w-5 h-5" /></button>
         </div>
       </div>
       

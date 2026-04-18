@@ -27,8 +27,8 @@ export const LiveMapView: React.FC<LiveMapViewProps> = ({ trucks }) => {
     <div className="h-full flex flex-col space-y-4 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Live Fleet Map</h2>
-          <p className="text-slate-500 text-sm">Real-time positions of {activeTrucks.length} active units</p>
+          <h2 className="text-2xl font-display font-semibold tracking-tight text-slate-900">Live Fleet Map</h2>
+          <p className="text-sm text-slate-500 mt-1">Real-time positions of {activeTrucks.length} active units</p>
         </div>
       </div>
 
