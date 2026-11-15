@@ -1,6 +1,6 @@
 import { Inspection, Truck, DispatchRequest, DispatchAssignment, Driver, SparePart } from "../types";
 
-const PROXY_URL = "/.netlify/functions/openrouter-proxy";
+const PROXY_URL = "/api/openrouter";
 
 // ─── Model Routing Strategy ────────────────────────────────────────────────
 const MODELS_PAID = [
